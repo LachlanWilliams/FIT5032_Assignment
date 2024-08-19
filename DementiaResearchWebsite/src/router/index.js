@@ -16,15 +16,7 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    component: AboutView,
-    beforeEnter: (to, from, next) => {
-      // Perform logic before entering the About route
-      if (isAuthenticated.value) {
-        next();
-      } else {
-        next({ name: 'login' }); // Redirect to the login page
-      }
-    }
+    component: AboutView
   },
   {
     path: '/',
@@ -40,7 +32,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Perform logic before every route change
-  if (!isAuthenticated && to.name !== 'login') {
+  if (!isAuthenticated.value && to.name !== 'login') {
     // For example, redirect to home if trying to access any other route
     next({ name: 'login' });
   } else {

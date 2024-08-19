@@ -59,7 +59,7 @@ const validatePassword = (blur) => {
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">Library Login Form</h1>
+        <h1 class="text-center">Login</h1>
         <p class="text-center">
           This has hardcoded credentials username: lwil, password: p
         </p>

@@ -10,10 +10,16 @@
           >
         </li>
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">About</router-link>
+          <router-link to="/Research" class="nav-link" active-class="active">Research</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+          <router-link to="/getinvolved" class="nav-link" active-class="active">Get involved</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/carers" class="nav-link" active-class="active">Our Carers</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
         </li>
       </ul>
     </header>

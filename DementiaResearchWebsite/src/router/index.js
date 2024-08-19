@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/ResearchView.vue'
+import ResearchView from '../views/ResearchView.vue'
 import LoginView from '../views/LoginView.vue'
+import GetInvolvedView from '@/views/GetInvolvedView.vue'
+import CarersView from '@/views/CarersView.vue'
+import SearchView from '@/views/SearchView.vue'
 import { ref } from 'vue'
 
 
@@ -9,20 +12,35 @@ export const isAuthenticated = ref(false);
 
 const routes = [
   {
+    path: '/',
+    name: 'Home',
+    component: HomeView
+  },
+  {
     path: '/login',
     name: 'login',
     component: LoginView,
   },
   {
-    path: '/about',
-    name: 'About',
-    component: AboutView
+    path: '/research',
+    name: 'Research',
+    component: ResearchView
+  },  
+  {
+    path: '/getinvolved',
+    name: 'Get Involved',
+    component: GetInvolvedView
   },
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView
-  }
+    path: '/carers',
+    name: 'Carers',
+    component: CarersView
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: SearchView
+  },
 ]
 
 const router = createRouter({

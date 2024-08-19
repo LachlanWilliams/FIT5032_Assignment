@@ -9,9 +9,9 @@ export const isAuthenticated = ref(false);
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: HomeView
+    path: '/login',
+    name: 'login',
+    component: LoginView,
   },
   {
     path: '/about',
@@ -27,9 +27,9 @@ const routes = [
     }
   },
   {
-    path: '/login',
-    name: 'login',
-    component: LoginView,
+    path: '/',
+    name: 'Home',
+    component: HomeView
   }
 ]
 
@@ -37,5 +37,15 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  // Perform logic before every route change
+  if (!isAuthenticated && to.name !== 'login') {
+    // For example, redirect to home if trying to access any other route
+    next({ name: 'login' });
+  } else {
+    next();
+  }
+});
 
 export default router

@@ -2,7 +2,8 @@
 </script>
 
 <template>
-<h1>HelloWorld</h1>
+<h1>Home Page</h1>
+<p>This is the home page more coming soon!!</p>
 </template>
 
 <style scoped>

@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import logins from '../assets/JSON/logins.json';
-import { isAuthenticated } from '@/router';
-
+import { isAuthenticated } from '../router';
 
 
 const formData = ref({
@@ -18,20 +17,22 @@ const credentials = ref({
 })
 
 const submitForm = () => {
-//   validateName(true)
-//   validatePassword(true)
-  if (formData.value.password == credentials.value.password && formData.value.username == credentials.value.username){
-    credentials.value.isAuthenticated = true
-    isAuthenticated.value = true
-    clearForm()
-  }
-}
-
-const clearForm = () => {
-  formData.value = {
-    username: '',
-    password: '',
-    role: ''
+  validateName(true)
+  validatePassword(true)
+  const user = logins.find(
+    login => 
+      login.username === formData.value.username &&
+      login.password === formData.value.password &&
+      login.role === formData.value.role
+  );
+  if (user) {
+    credentials.value.isAuthenticated = true;
+    credentials.value.username = user.username;
+    credentials.value.role = user.role;
+    isAuthenticated.value = true; // Assuming this updates global/auth state
+  } else {
+    errors.value.username = 'Invalid credentials';
+    errors.value.password = 'Invalid credentials';
   }
 }
 
@@ -65,7 +66,7 @@ const validatePassword = (blur) => {
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">Login Form</h1>
         <p class="text-center">
-          This has hardcoded credentials username: lwil, password: p
+          This has hardcoded credentials username: lwil, password: u, role: user
         </p>
         <form @submit.prevent="submitForm">
           <div class="row mb-3">

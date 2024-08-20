@@ -1,0 +1,18 @@
+[
+    {
+        "username": "lwil",
+        "password": "u",
+        "role": "user"
+    },
+    {
+        "username": "aCarer",
+        "password": "c",
+        "role": "carer"
+    },    
+    {
+        "username": "anAdmin",
+        "password": "u",
+        "role": "admin"
+    }
+
+]

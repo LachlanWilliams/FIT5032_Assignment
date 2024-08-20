@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import logins from '../assets/JSON/logins.json';
 import { isAuthenticated, role } from '../router';
+import router from '../router';
 
 
 const formData = ref({
@@ -20,6 +21,7 @@ const submitForm = () => {
   if (user) {
     isAuthenticated.value = true; // Assuming this updates global/auth state
     role.value = formData.value.role;
+    router.push({name: 'Home'});
   } else {
     errors.value.username = 'Invalid credentials';
     errors.value.password = 'Invalid credentials';

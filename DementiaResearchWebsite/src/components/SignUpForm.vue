@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { isAuthenticated, role } from '../router';
+import router from '../router';
 
 
 const formData = ref({
@@ -78,6 +79,7 @@ const submitForm = () => {
   if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword && !errors.value.role) {
     isAuthenticated.value = true; // Assuming this updates global/auth state
     role.value = formData.value.role;
+    router.push({name: 'Home'});
   }
 }
 </script>

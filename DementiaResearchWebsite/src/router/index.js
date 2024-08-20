@@ -5,7 +5,6 @@ import LoginView from '../views/LoginView.vue'
 import GetInvolvedView from '@/views/GetInvolvedView.vue'
 import CarersView from '@/views/CarersView.vue'
 import SearchView from '@/views/SearchView.vue'
-import { ref, reactive } from 'vue'
 
 import { isAuthenticated } from '@/main'
 

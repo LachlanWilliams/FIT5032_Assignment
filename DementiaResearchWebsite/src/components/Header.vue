@@ -1,3 +1,7 @@
+<script setup>
+import { isAuthenticated, role } from '@/main';
+</script>
+
 <template>
   <!-- Using Bootstrap's Header template (starter code) -->
   <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
@@ -22,6 +26,16 @@
           <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
         </li>
       </ul>
+      <div class="right-element">
+      </div>
+      <!-- <div v-if="isAuthenticated" class="right-element">
+        <p>{{ role }}</p>
+        <button class="btn btn-primary me-2">Sign out</button>
+
+      </div>
+      <div v-else class="right-element">
+        <p>Not signed in</p>
+      </div> -->
     </header>
   </div>
 </template>
@@ -60,5 +74,9 @@
 
 .dropdown-toggle {
   outline: 0;
+}
+
+.right-element {
+  margin-left: auto;
 }
 </style>

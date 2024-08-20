@@ -7,9 +7,8 @@ import CarersView from '@/views/CarersView.vue'
 import SearchView from '@/views/SearchView.vue'
 import { ref, reactive } from 'vue'
 
+import { isAuthenticated } from '@/main'
 
-export const isAuthenticated = ref(false); 
-export const role = ref('');
 
 const routes = [
   {

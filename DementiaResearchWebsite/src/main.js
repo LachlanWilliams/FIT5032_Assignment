@@ -1,14 +1,15 @@
-//import './assets/main.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-
-//createApp(App).mount('#app')
+import { ref } from 'vue'
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
+
+export const isAuthenticated = ref(false); 
+export const role = ref('');
 
 const app = createApp(App)
 app.use(PrimeVue, { theme: { preset: Aura } })

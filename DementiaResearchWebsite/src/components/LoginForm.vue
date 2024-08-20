@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import logins from '../assets/JSON/logins.json';
-import { isAuthenticated, role } from '../router';
+import { isAuthenticated, role } from '@/main';
 import router from '../router';
 
 

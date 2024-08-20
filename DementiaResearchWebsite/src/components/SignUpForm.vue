@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { isAuthenticated, role } from '../router';
+import { isAuthenticated, role } from '@/main';
 import router from '../router';
 
 

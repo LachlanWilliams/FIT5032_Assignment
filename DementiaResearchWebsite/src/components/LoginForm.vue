@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import logins from '../assets/JSON/logins.json';
-import { isAuthenticated } from '../router';
+import { isAuthenticated, role } from '../router';
 
 
 const formData = ref({
@@ -10,15 +10,7 @@ const formData = ref({
   role: ''
 })
 
-const credentials = ref({
-    username: 'lwil',
-    password: 'p',
-    isAuthenticated: false
-})
-
 const submitForm = () => {
-  validateName(true)
-  validatePassword(true)
   const user = logins.find(
     login => 
       login.username === formData.value.username &&
@@ -26,10 +18,8 @@ const submitForm = () => {
       login.role === formData.value.role
   );
   if (user) {
-    credentials.value.isAuthenticated = true;
-    credentials.value.username = user.username;
-    credentials.value.role = user.role;
     isAuthenticated.value = true; // Assuming this updates global/auth state
+    role.value = formData.value.role;
   } else {
     errors.value.username = 'Invalid credentials';
     errors.value.password = 'Invalid credentials';
@@ -40,24 +30,6 @@ const errors = ref({
   username: null,
   password: null,
 })
-
-const validateName = (blur) => {
-  if (formData.value.username == credentials.value.username) {
-    if (blur) errors.value.username = 'You got the name correct'
-  } else {
-    errors.value.username = null
-  }
-}
-
-const validatePassword = (blur) => {
-  const password = formData.value.password
-  
-  if (password == credentials.value.password) {
-    if (blur) errors.value.password = 'You got the password correct'
-  } else {
-    errors.value.password = null
-  }
-}
 </script>
 
 <template>
@@ -76,8 +48,6 @@ const validatePassword = (blur) => {
                 type="text"
                 class="form-control"
                 id="username"
-                @blur="() => validateName(true)"
-                @input="() => validateName(false)"
                 v-model="formData.username"
               />
               <div v-if="errors.username" class="text-success">{{ errors.username }}</div>
@@ -88,8 +58,6 @@ const validatePassword = (blur) => {
                 type="password"
                 class="form-control"
                 id="password"
-                @blur="() => validatePassword(true)"
-                @input="() => validatePassword(false)"
                 v-model="formData.password"
               />
               <div v-if="errors.password" class="text-success">{{ errors.password }}</div>
@@ -106,8 +74,8 @@ const validatePassword = (blur) => {
             </div>
           </div>
           <div class="text-center">
-            <button type="button" class="btn btn-primary me-2" @click="submitForm">Submit</button>
-            <div v-if="credentials.isAuthenticated" class="text-success">You are authenticated</div>
+            <button type="button" class="btn btn-primary me-2" @click="submitForm">Login</button>
+            <div v-if="isAuthenticated" class="text-success">You are authenticated as a {{ role }}</div>
             <!-- <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button> -->
           </div>
         </form>

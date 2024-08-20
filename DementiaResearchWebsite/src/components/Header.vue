@@ -1,5 +1,6 @@
 <script setup>
 import { isAuthenticated, role } from '@/main';
+import { RouterLink } from 'vue-router';
 </script>
 
 <template>
@@ -7,7 +8,8 @@ import { isAuthenticated, role } from '@/main';
   <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
   <div class="container">
     <header class="d-flex justify-content-center py-3">
-      <ul class="nav nav-pills">
+      <div class="col-12 col-sm-10">
+        <ul class="nav nav-pills">
         <li class="nav-item">
           <router-link to="/" class="nav-link" active-class="active" aria-current="page"
             >Home</router-link
@@ -26,16 +28,13 @@ import { isAuthenticated, role } from '@/main';
           <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
         </li>
       </ul>
-      <div class="right-element">
       </div>
-      <!-- <div v-if="isAuthenticated" class="right-element">
-        <p>{{ role }}</p>
-        <button class="btn btn-primary me-2">Sign out</button>
-
+      <div class="col-12 col-sm-1">
+          <p>hello</p>
       </div>
-      <div v-else class="right-element">
-        <p>Not signed in</p>
-      </div> -->
+      <div class="col-12 col-sm-1">
+        <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+      </div>
     </header>
   </div>
 </template>
@@ -78,5 +77,9 @@ import { isAuthenticated, role } from '@/main';
 
 .right-element {
   margin-left: auto;
+}
+
+.left-element {
+  margin-right: auto;
 }
 </style>

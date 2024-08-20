@@ -1,11 +1,9 @@
 <template>
-    <div class="about">
-      <h1>Carers</h1>
-      <p>This is our carers page</p>
-    </div>
+    <PageCard title="Carers" content="This is the carers page "/>
   </template>
   
   <script setup>
+  import PageCard from '@/components/PageCard.vue';
   // No script needed for now
   </script>
   

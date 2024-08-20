@@ -1,6 +1,16 @@
 <script setup>
 import { isAuthenticated, role } from '@/main';
 import { RouterLink } from 'vue-router';
+
+// function logout(){
+//   isAuthenticated.value = false
+
+// }
+const logout = () => {
+  isAuthenticated.value = false
+  role.value = ''
+}
+
 </script>
 
 <template>
@@ -29,11 +39,21 @@ import { RouterLink } from 'vue-router';
         </li>
       </ul>
       </div>
-      <div class="col-12 col-sm-1">
-          <p>hello</p>
+      <div v-if="isAuthenticated">
+        <!-- <div class="col-12 col-sm-1">
+            <p>{{ role }}</p>
+        </div> -->
+        <div class="col-12 col-sm-1">
+          <router-link to="/login" class="nav-link text-primary" @click.native="logout" active-class="active">Logout</router-link>
+        </div>
       </div>
-      <div class="col-12 col-sm-1">
-        <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+      <div v-else>
+        <!-- <div class="col-12 col-sm-1">
+            <p>Sign in</p>
+        </div> -->
+        <div class="col-12 col-sm-1">
+          <router-link to="/login" class="nav-link text-primary" @click.native="logout" active-class="active">Login</router-link>
+        </div>
       </div>
     </header>
   </div>

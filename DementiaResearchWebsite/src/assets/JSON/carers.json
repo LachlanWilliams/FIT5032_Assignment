@@ -1,0 +1,26 @@
+[
+    {
+      "name": "Greg",
+      "role": "Age Care Worker",
+      "rating": 5,
+      "description": "Hi, my name is Greg. I have been working in aged care for over 10 years. My passion is to provide compassionate care and support to the elderly, ensuring they live with dignity and comfort."
+    },
+    {
+      "name": "Sophia",
+      "role": "Senior Caregiver",
+      "rating": 5,
+      "description": "Hello, I'm Sophia. With a background in nursing, I've dedicated the last 8 years to senior care. I take pride in creating a safe and nurturing environment for the elderly."
+    },
+    {
+      "name": "Liam",
+      "role": "Rehabilitation Assistant",
+      "rating": 5,
+      "description": "My name is Liam. I have been a rehabilitation assistant in aged care for 6 years. I focus on helping seniors regain mobility and independence through personalized exercise programs."
+    },
+    {
+      "name": "Emily",
+      "role": "Dementia Care Specialist",
+      "rating": 5,
+      "description": "Hi, I'm Emily. With 5 years of experience in dementia care, I am committed to providing specialized support to those with memory loss, helping them and their families navigate this challenging journey."
+    }
+  ]

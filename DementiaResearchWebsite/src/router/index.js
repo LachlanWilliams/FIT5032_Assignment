@@ -40,6 +40,12 @@ const routes = [
     name: 'Search',
     component: SearchView
   },
+  {
+    path: '/carer/:name',
+    name: 'CarerDetails',
+    component: () => import('@/views/CarerDetails.vue'),
+    props: true
+  }
 ]
 
 const router = createRouter({

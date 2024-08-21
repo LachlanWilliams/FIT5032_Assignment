@@ -4,11 +4,15 @@ import { defineProps } from 'vue';
 
 // Define props to accept `title` and `content`
 const props = defineProps({
-  title: {
+  name: {
     type: String,
     required: true
   },
-  content: {
+  role: {
+    type: String,
+    required: true
+  },
+  description: {
     type: String,
     required: true
   }
@@ -16,10 +20,14 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="full-page">
+    <div>
         <Card class="custom-card">
-            <template #title>{{ title }}</template>
-            <template #content>{{ content }}
+            <template #title>{{ name }}</template>
+            <template #content>
+                <div>
+                    <p>{{ role }}</p>
+                    <span>{{ description }}</span>
+                </div>
             </template>
         </Card>
     </div>
@@ -29,11 +37,6 @@ const props = defineProps({
 .custom-card {
   background-color: #f5f5f5;
   color: black;
-}
-.full-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Full viewport height */
-}
 
+}
 </style>

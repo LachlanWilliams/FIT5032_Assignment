@@ -1,11 +1,22 @@
 <script setup>
-import { ref } from 'vue';
-import PageCard from '@/components/PageCard.vue';
-import carers from '../assets/JSON/carers.json';
+import carers from '../assets/JSON/carers.json'
+import CarerCard from '@/components/CarerCard.vue';
 </script>
 
 <template>
-    <PageCard title="Carers" content="This is the carers page "/>
+  <h1>Carers Page</h1>
+    <p>Below is a list of all the carers</p>
+    <div>
+      <CarerCard
+        v-for="carer in carers"
+        :key="carer.name"
+        :name="carer.name"
+        :role="carer.role"
+        :description="carer.description"
+      />
+    </div>
+    <div>
+    </div>
 </template>
   
   <style>

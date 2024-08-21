@@ -20,7 +20,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div>
+    <div class="card-container">
         <Card class="custom-card">
             <template #title>{{ name }}</template>
             <template #content>
@@ -38,5 +38,8 @@ const props = defineProps({
   background-color: #f5f5f5;
   color: black;
 
+}
+.card-container {
+  padding-bottom: 1rem; /* Adjust padding as needed */
 }
 </style>

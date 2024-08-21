@@ -15,8 +15,6 @@ import CarerCard from '@/components/CarerCard.vue';
         :description="carer.description"
       />
     </div>
-    <div>
-    </div>
 </template>
   
   <style>

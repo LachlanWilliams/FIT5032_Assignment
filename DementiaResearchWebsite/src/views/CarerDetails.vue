@@ -15,6 +15,7 @@ const carer = computed(() => {
     <h1>{{ carer.name }}</h1>
     <h2>{{ carer.role }}</h2>
     <p>{{ carer.description }}</p>
+    <p>Rating: {{ carer.rating }}/5</p>
   </div>
   <div v-else>
     <p>Carer not found.</p>

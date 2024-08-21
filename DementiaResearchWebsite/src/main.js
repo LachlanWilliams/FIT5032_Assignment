@@ -12,7 +12,17 @@ export const isAuthenticated = ref(true);
 export const role = ref('');
 
 const app = createApp(App)
-app.use(PrimeVue, { theme: { preset: Aura } })
+app.use(PrimeVue, {
+    // Default theme configuration
+    theme: {
+        preset: Aura,
+        options: {
+            prefix: 'p',
+            darkModeSelector: 'system',
+            cssLayer: false
+        }
+    }
+ });
 app.use(router)
 
 app.mount('#app')

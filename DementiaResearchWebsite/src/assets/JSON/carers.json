@@ -2,7 +2,7 @@
     {
       "name": "Greg",
       "role": "Age Care Worker",
-      "rating": 5,
+      "rating": 3,
       "description": "Hi, my name is Greg. I have been working in aged care for over 10 years. My passion is to provide compassionate care and support to the elderly, ensuring they live with dignity and comfort."
     },
     {
@@ -20,7 +20,7 @@
     {
       "name": "Emily",
       "role": "Dementia Care Specialist",
-      "rating": 5,
+      "rating": 4,
       "description": "Hi, I'm Emily. With 5 years of experience in dementia care, I am committed to providing specialized support to those with memory loss, helping them and their families navigate this challenging journey."
     }
   ]

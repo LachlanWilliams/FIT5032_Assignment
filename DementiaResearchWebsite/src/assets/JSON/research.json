@@ -1,0 +1,23 @@
+[
+    {
+        "title": "What is dementia",
+        "precontent": "When someone has dementia, they have a disease of the brain which damages parts of it and stops those parts working like they should. Dementia changes the way people think, feel and act. Alzheimer’s disease, frontotemporal dementia, lewy body disease and vascular dementia are all types or causes of dementia. Do you know the names of any others? Each of these types of dementia affects the brain in different ways.",
+        "content": [
+            {"subtitle": "Why do people get dementia", "subcontent": "Doctors don’t know why some people get dementia and others don’t. But we DO know that it is not anyone’s fault when a person gets dementia. It is definitely NOT your fault if someone you know has dementia and things get harder for your family. Another thing we know about dementia is that we can’t catch dementia like we can catch a cold. You won’t get dementia from the person you know who has it. No one else in the family will catch dementia either. Most people who get dementia are older people. Not everyone who is old gets dementia"},
+            {"subtitle": "Can people with dementia get better", "subcontent": "As you know, we usually get better when we are sick. Sometimes we need to see a doctor to help us get better. But sadly, doctors don’t know how to make people with dementia get better. All around the world, there are other families looking after someone who has dementia too! And all around the world, doctors and scientists are working hard to find a way to cure dementia or make the changes happen more slowly."}
+        ],
+        "links": "https://www.dementia.org.au/about-dementia/dementia-my-family/age-5-8/what-dementia-5-8",
+        "publisher": "Dementia Australia",
+        "date": "01/02/2024"
+    },
+    {
+        "title": "Genetics and Dementia",
+        "precontent": "What role do your genes play in your risk of developing dementia? Can you inherit dementia from your biological parents? Can you pass it on to your kids or grandkids? If there’s dementia in your family history, or you’ve been diagnosed with dementia, you probably have questions about genes. Let’s start with what genes are, and how they influence your health.",
+        "content": [
+            {"subtitle": "Understanding Genes", "subcontent": "In every cell in your body, there are tiny, twisted coils of DNA: the basic instructions for making you. Your genes are made of DNA, and they play a role in things like: your eye and hair colour your height whether you have dimples or not. You inherit your genes from your biological parents. You might also inherit a mutation, which is a change in the genes you inherit. Most mutations are harmless. Your genes also play a role in how likely you are to develop some medical conditions. Almost all of the known genes linked to dementia are risk-factor genes, which means if you have that gene in your DNA, you’re more likely to develop dementia. Different genes affect your risk of developing different conditions that lead to dementia. Here are some of the most common."}
+        ],
+        "links": "https://www.dementia.org.au/about-dementia/genetics-and-dementia",
+        "publisher": "Dementia Australia",
+        "date": "01/02/2024"
+    }
+]

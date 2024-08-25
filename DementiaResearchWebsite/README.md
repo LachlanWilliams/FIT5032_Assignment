@@ -1,6 +1,8 @@
 # DementiaResearchWebsite
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a website that has been create for my university class FIT5032 - Internet applications development
+The website is a reasearch based website that is focused on making information about dementia and dementia care
+more avaliable.
 
 ## Recommended IDE Setup
 

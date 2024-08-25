@@ -4,8 +4,11 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+require('dotenv').config();
+const apiKey = process.env.FIREBASE_API_KEY;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDJn4t3gnfEt8RSuEm5AF_9vaHpM4VymiU",
+  apiKey: apiKey,
   authDomain: "dementiaresearchwebsite.firebaseapp.com",
   projectId: "dementiaresearchwebsite",
   storageBucket: "dementiaresearchwebsite.appspot.com",

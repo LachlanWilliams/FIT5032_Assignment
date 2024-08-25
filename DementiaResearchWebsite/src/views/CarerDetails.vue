@@ -19,6 +19,8 @@ const carer = computed(() => {
 // to see if the review form is visible 
 const visible = ref(false);
 
+const averageRating = ref(0);
+
 // ran when the review is submitted
 const submitReview = () => {
     validateComments(true)
@@ -26,9 +28,19 @@ const submitReview = () => {
     if (!errors.value.comments && !errors.value.rating) {
         visible.value = false;
         submittedReviews.value.push({ ...review.value })
+        calculateAverage()
         clearReview()
     }
 }
+
+const calculateAverage = () => {
+    if (submittedReviews.value.length === 0) {
+        averageRating.value = 0;
+    } else {
+        const total = submittedReviews.value.reduce((sum, review) => sum + review.rating, 0);
+        averageRating.value = total / submittedReviews.value.length;
+    }
+};
 
 // value connected to the review form
 const review = ref({
@@ -68,7 +80,7 @@ const validateComments = (blur) => {
     <h1>{{ carer.name }}</h1>
     <h2>{{ carer.role }}</h2>
     <p>{{ carer.description }}</p>
-    <Rating v-model="carer.rating" readonly/>
+    <Rating v-model="averageRating" readonly/>
     <p>Leave a review</p>
     <Button @click="visible = true" label="Submit review" severity="Primary" outlined />
     

@@ -11,12 +11,6 @@ const logout = () => {
 <template>
   <div class="container">
     <header class="d-flex justify-content-between align-items-center py-3">
-      <div class="left-element">
-        <!-- Logo placed here -->
-        <router-link to="/">
-          <img src="@/assets/clouds.png" alt="Logo" class="logo-img" />
-        </router-link>
-      </div>
       <div class="col-12 col-sm-10">
         <ul class="nav nav-pills justify-content-center">
           <li class="nav-item">

@@ -2,55 +2,46 @@
 import { isAuthenticated, role } from '@/main';
 import { RouterLink } from 'vue-router';
 
-// function logout(){
-//   isAuthenticated.value = false
-
-// }
 const logout = () => {
   isAuthenticated.value = false
   role.value = ''
 }
-
 </script>
 
 <template>
-  <!-- Using Bootstrap's Header template (starter code) -->
-  <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
   <div class="container">
-    <header class="d-flex justify-content-center py-3">
+    <header class="d-flex justify-content-between align-items-center py-3">
+      <div class="left-element">
+        <!-- Logo placed here -->
+        <router-link to="/">
+          <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
+        </router-link>
+      </div>
       <div class="col-12 col-sm-10">
-        <ul class="nav nav-pills">
-        <li class="nav-item">
-          <router-link to="/" class="nav-link" active-class="active" aria-current="page"
-            >Home</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link to="/Research" class="nav-link" active-class="active">Research</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/getinvolved" class="nav-link" active-class="active">Get involved</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/carers" class="nav-link" active-class="active">Our Carers</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
-        </li>
-      </ul>
+        <ul class="nav nav-pills justify-content-center">
+          <li class="nav-item">
+            <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/Research" class="nav-link" active-class="active">Research</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/getinvolved" class="nav-link" active-class="active">Get involved</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/carers" class="nav-link" active-class="active">Our Carers</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
+          </li>
+        </ul>
       </div>
       <div v-if="isAuthenticated">
-        <!-- <div class="col-12 col-sm-1">
-            <p>{{ role }}</p>
-        </div> -->
         <div class="col-12 col-sm-1">
           <router-link to="/login" class="nav-link text-primary" @click.native="logout" active-class="active">Logout</router-link>
         </div>
       </div>
       <div v-else>
-        <!-- <div class="col-12 col-sm-1">
-            <p>Sign in</p>
-        </div> -->
         <div class="col-12 col-sm-1">
           <router-link to="/login" class="nav-link text-primary" @click.native="logout" active-class="active">Login</router-link>
         </div>
@@ -101,5 +92,9 @@ const logout = () => {
 
 .left-element {
   margin-right: auto;
+}
+
+.logo-img {
+  height: 50px; /* Adjust the size of your logo */
 }
 </style>

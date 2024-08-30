@@ -90,7 +90,7 @@ const submitForm = () => {
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">Sign Up Form</h1>
         <p class="text-center">
-          This has hardcoded credentials username: lwil, password: u, role: user
+          Sign up here !!
         </p>
         <form @submit.prevent="submitForm">
           <div class="row mb-3">

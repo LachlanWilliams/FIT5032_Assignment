@@ -2,8 +2,8 @@
 </script>
 
 <template>
-<h1>Home Page</h1>
-<p>This is the home page more coming soon!!</p>
+<h1>Dementia Research Australia</h1>
+<p>Welcome to DRA. We are here to provide and educate on all this dementia </p>
 </template>
 
 <style scoped>

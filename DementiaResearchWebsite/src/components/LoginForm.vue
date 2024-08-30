@@ -52,7 +52,7 @@ const errors = ref({
                 id="username"
                 v-model="formData.username"
               />
-              <div v-if="errors.username" class="text-success">{{ errors.username }}</div>
+              <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="password" class="form-label">Password</label>
@@ -62,7 +62,7 @@ const errors = ref({
                 id="password"
                 v-model="formData.password"
               />
-              <div v-if="errors.password" class="text-success">{{ errors.password }}</div>
+              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
             </div>
           </div>
           <div class="row mb-3">

@@ -11,6 +11,11 @@ body {
   color: #430099; /* Set the global text color */
 }
 
+h1, h2, h3, h4, h5, h6{
+  color: #430099;
+  text-align: center;
+}
+
 /* If you want to apply this to all text elements */
 h1, h2, h3, h4, h5, h6, p, a, span, div {
   color: #430099;

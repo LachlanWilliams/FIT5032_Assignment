@@ -1,35 +1,44 @@
 <script setup>
-import { ref, computed } from 'vue'
-import logins from '../assets/JSON/logins.json';
+import { ref } from 'vue';
 import { isAuthenticated, name } from '@/main';
 import router from '../router';
-
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const formData = ref({
   email: '',
-  password: '',
-  name: ''
-})
-
-const submitForm = () => {
-  const user = logins.find(
-    login => 
-      login.email === formData.value.email &&
-      login.password === formData.value.password
-  );
-  if (user) {
-    isAuthenticated.value = true; // Assuming this updates global/auth state
-    router.push({name: 'Home'});
-  } else {
-    errors.value.email = 'Invalid credentials';
-    errors.value.password = 'Invalid credentials';
-  }
-}
+  password: ''
+});
 
 const errors = ref({
   email: null,
-  password: null,
-})
+  password: null
+});
+
+const submitForm = async () => {
+  const auth = getAuth();
+  
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth, 
+      formData.value.email, 
+      formData.value.password
+    );
+    
+    // Login successful, get user info
+    const user = userCredential.user;
+
+    // Set global authentication state and user's name
+    isAuthenticated.value = true;
+    name.value = user.displayName || user.email; // Use displayName if available, else fallback to email
+    
+    // Redirect to Home after login
+    router.push({ name: 'Home' });
+  } catch (error) {
+    // Handle Errors
+    errors.value.email = 'Invalid credentials';
+    errors.value.password = 'Invalid credentials';
+  }
+};
 </script>
 
 <template>

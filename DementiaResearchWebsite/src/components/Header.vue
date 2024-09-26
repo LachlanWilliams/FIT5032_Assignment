@@ -32,6 +32,7 @@ const logout = () => {
       </div>
       <div v-if="isAuthenticated">
         <div class="col-12 col-sm-1">
+          <p>{{ name }}</p>
           <router-link to="/login" class="nav-link text-primary" @click.native="logout" active-class="active">Logout</router-link>
         </div>
       </div>

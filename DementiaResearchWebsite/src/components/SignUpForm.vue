@@ -90,7 +90,7 @@ const submitForm = () => {
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">Sign Up Form</h1>
         <p class="text-center">
-          Sign up here !!
+          Please enter the required information
         </p>
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
@@ -111,7 +111,6 @@ const submitForm = () => {
               <select class="form-select" id="role" @blur="() => validateRole(true)" @input="() => validateRole(false)" v-model="formData.role" required>
                 <option value="user">User</option>
                 <option value="carer">Carer</option>
-                <option value="admin">Administrator</option>
               </select>
               <div v-if="errors.role" class="text-danger">{{ errors.role }}</div>
             </div>

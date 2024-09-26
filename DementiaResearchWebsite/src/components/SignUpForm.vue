@@ -20,9 +20,9 @@ const errors = ref({
 
 const validateName = (blur) => {
   if (formData.value.name.length < 5) {
-    if (blur) errors.value.email = 'Name must be at least 5 characters'
+    if (blur) errors.value.name = 'Name must be at least 5 characters'
   } else {
-    errors.value.email = null
+    errors.value.name = null
   }
 }
 
@@ -110,7 +110,7 @@ const submitForm = async () => {
                 <input
                     type="text"
                     class="form-control"
-                    id="email"
+                    id="name"
                     @blur="() => validateName(true)"
                     @input="() => validateName(false)"
                     v-model="formData.name"

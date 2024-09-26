@@ -27,7 +27,14 @@ const validateName = (blur) => {
 }
 
 const validateEmail = (blur) => {
-  // TODO: validtae emailwith @ and . something 
+  const email = formData.value.email; // Assuming you have an email field in formData
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for validating email format
+
+  if (!emailPattern.test(email)) {
+    if (blur) errors.value.email = 'Please enter a valid email address.';
+  } else {
+    errors.value.email = null; // Clear the error if the email is valid
+  }
 }
 
 const validatePassword = (blur) => {
@@ -68,6 +75,7 @@ const submitForm = async () => {
   validateName(true)
   validatePassword(true)
   validateConfirmPassword(true)
+  validateEmail(true); // Call email validation
 
   if (!errors.value.email && !errors.value.password && !errors.value.confirm) {
     const auth = getAuth(); // Initialize Firebase Auth

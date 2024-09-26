@@ -1,29 +1,33 @@
 <script setup>
 import { ref } from 'vue'
-import { isAuthenticated, role } from '@/main';
+import { isAuthenticated, name } from '@/main';
 import router from '../router';
-
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Import Firebase Authentication
 
 const formData = ref({
-  username: '',
+  email: '',
   password: '',
   confirm: '',
-  role: ''
+  name: ''
 })
 
 const errors = ref({
-  username: null,
+  email: null,
   password: null,
   confirm: null,
-  role: null,
+  name: null,
 })
 
 const validateName = (blur) => {
-  if (formData.value.username.length < 5) {
-    if (blur) errors.value.username = 'Name must be at least 5 characters'
+  if (formData.value.name.length < 5) {
+    if (blur) errors.value.email = 'Name must be at least 5 characters'
   } else {
-    errors.value.username = null
+    errors.value.email = null
   }
+}
+
+const validateEmail = (blur) => {
+  // TODO: validtae emailwith @ and . something 
 }
 
 const validatePassword = (blur) => {
@@ -54,35 +58,42 @@ const validateConfirmPassword = (blur) => {
   const password = formData.value.password
 
   if (confirm !== password) {
-    if (blur) errors.value.confirm = 'Confirm password must be the same a the password.'
+    if (blur) errors.value.confirm = 'Confirm password must be the same as the password.'
   } else {
     errors.value.confirm = null
   }
 }
 
-const validateRole = (blur) => {
-    const role = formData.value.role
+const submitForm = async () => {
+  validateName(true)
+  validatePassword(true)
+  validateConfirmPassword(true)
 
-    if (role == '' || role == null){
-        if (blur) errors.value.role = "Select a role."
-    } else {
-        errors.value.role = null
+  if (!errors.value.email && !errors.value.password && !errors.value.confirm) {
+    const auth = getAuth(); // Initialize Firebase Auth
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password);
+      const user = userCredential.user;
+
+      // Optionally update the user's display name
+      await updateProfile(user, {
+        displayName: formData.value.name // or you can use the email
+      });
+
+      // Set global authentication state
+      isAuthenticated.value = true;
+      name.value = formData.value.name;
+
+      // Redirect to home page
+      router.push({ name: 'Home' });
+    } catch (error) {
+      console.error('Error signing up:', error);
+      errors.value.email = 'Error signing up. Please try again.';
     }
-}
-
-const submitForm = () => {
-    validateName(true)
-    validatePassword(true)
-    validateConfirmPassword(true)
-    validateRole(true)
-
-  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword && !errors.value.role) {
-    isAuthenticated.value = true; // Assuming this updates global/auth state
-    role.value = formData.value.role;
-    router.push({name: 'Home'});
   }
 }
 </script>
+
 
 <template>
   <div class="container mt-5">
@@ -95,24 +106,28 @@ const submitForm = () => {
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6">
-                <label for="username" class="form-label">Username</label>
+                <label for="name" class="form-label">Name</label>
                 <input
                     type="text"
                     class="form-control"
-                    id="username"
+                    id="email"
                     @blur="() => validateName(true)"
                     @input="() => validateName(false)"
-                    v-model="formData.username"
+                    v-model="formData.name"
                 />
-                <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
+                <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
             </div>
             <div class="col-md-6 col-sm-6">
-                <label for="role" class="form-label">Role</label>
-              <select class="form-select" id="role" @blur="() => validateRole(true)" @input="() => validateRole(false)" v-model="formData.role" required>
-                <option value="user">User</option>
-                <option value="carer">Carer</option>
-              </select>
-              <div v-if="errors.role" class="text-danger">{{ errors.role }}</div>
+              <label for="email" class="form-label">Email</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="email"
+                    @blur="() => validateEmail(true)"
+                    @input="() => validateEmail(false)"
+                    v-model="formData.email"
+                />
+                <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
             </div>
           </div>
           <div class="row mb-3">
@@ -143,7 +158,7 @@ const submitForm = () => {
             </div>
           <div class="text-center">
             <button type="button" class="btn btn-primary me-2" @click="submitForm">Sign Up</button>
-            <div v-if="isAuthenticated" class="text-success">You are authenticated as a {{ role }}</div>
+            <div v-if="isAuthenticated" class="text-success">Thank you {{ name }} you have successfully signed up</div>
             <!-- <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button> -->
           </div>
         </form>
@@ -169,7 +184,7 @@ const submitForm = () => {
 }
 
 /* ID selectors */
-#username:focus,
+#email:focus,
 #password:focus,
 #isAustralian:focus,
 

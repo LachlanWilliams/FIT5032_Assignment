@@ -11,7 +11,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 
 export const isAuthenticated = ref(false); 
-export const role = ref('');
+export const name = ref('');
 
 const app = createApp(App)
 app.use(PrimeVue, {

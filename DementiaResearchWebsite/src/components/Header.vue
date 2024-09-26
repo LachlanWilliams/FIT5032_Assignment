@@ -1,10 +1,10 @@
 <script setup>
-import { isAuthenticated, role } from '@/main';
+import { isAuthenticated, name } from '@/main';
 import { RouterLink } from 'vue-router';
 
 const logout = () => {
   isAuthenticated.value = false
-  role.value = ''
+  name.value = ''
 }
 </script>
 

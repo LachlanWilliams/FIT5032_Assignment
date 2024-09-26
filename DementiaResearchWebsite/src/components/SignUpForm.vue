@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { isAuthenticated, name } from '@/main';
 import router from '../router';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Import Firebase Authentication
+import { getFirestore, doc, setDoc } from "firebase/firestore"; // Import Firestore
 
 const formData = ref({
   email: '',
@@ -79,13 +80,21 @@ const submitForm = async () => {
 
   if (!errors.value.email && !errors.value.password && !errors.value.confirm) {
     const auth = getAuth(); // Initialize Firebase Auth
+    const db = getFirestore(); // Initialize Firestore
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password);
       const user = userCredential.user;
 
       // Optionally update the user's display name
       await updateProfile(user, {
-        displayName: formData.value.name // or you can use the email
+        displayName: formData.value.name
+      });
+
+      // Create a user document in Firestore with a default role of 'user'
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        displayName: formData.value.name,
+        role: 'user', // Default role assigned to new users
       });
 
       // Set global authentication state

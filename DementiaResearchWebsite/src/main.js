@@ -27,6 +27,7 @@ initializeApp(firebaseConfig);
 
 export const isAuthenticated = ref(false); 
 export const name = ref('');
+export const role = ref('user');
 
 const app = createApp(App)
 app.use(PrimeVue, {

@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { isAuthenticated, name } from '@/main';
+import { isAuthenticated, name, role } from '@/main';
 import router from '../router';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Import Firestore methods
 
 const formData = ref({
   email: '',
@@ -16,7 +17,8 @@ const errors = ref({
 
 const submitForm = async () => {
   const auth = getAuth();
-  
+  const db = getFirestore(); // Initialize Firestore
+
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth, 
@@ -27,12 +29,29 @@ const submitForm = async () => {
     // Login successful, get user info
     const user = userCredential.user;
 
-    // Set global authentication state and user's name
-    isAuthenticated.value = true;
-    name.value = user.displayName || user.email; // Use displayName if available, else fallback to email
+    // Retrieve the user's document from Firestore
+    const userDocRef = doc(db, 'users', user.uid); // Get reference to the user's document
+    const userDocSnap = await getDoc(userDocRef); // Fetch the document
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data(); // Get user data (including the role)
+
+      // Set global authentication state and user's name
+      isAuthenticated.value = true;
+      name.value = user.displayName || user.email; // Use displayName if available, else fallback to email
+      role.value = userData.role
+      console.log('User role:', userData.role); // Log user role, for example
+      
+      // You can set the user's role or use it for conditional navigation
+      if (userData.role === 'admin') {
+        router.push({ name: 'AdminDashboard' });
+      } else {
+        router.push({ name: 'Home' }); // Redirect to home page for regular users
+      }
+    } else {
+      console.error('No such user document!');
+    }
     
-    // Redirect to Home after login
-    router.push({ name: 'Home' });
   } catch (error) {
     // Handle Errors
     errors.value.email = 'Invalid credentials';
@@ -40,6 +59,7 @@ const submitForm = async () => {
   }
 };
 </script>
+
 
 <template>
   <div class="container mt-5">

@@ -6,6 +6,7 @@ import GetInvolvedView from '@/views/GetInvolvedView.vue';
 import CarersView from '@/views/CarersView.vue';
 import SearchView from '@/views/SearchView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
+import ProfileView from '@/views/ProfileView.vue';
 
 import { isAuthenticated, role } from '@/main';
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: SearchView
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView
   },
   {
     path: '/carer/:name',

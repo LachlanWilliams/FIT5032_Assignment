@@ -28,6 +28,9 @@ const logout = () => {
           <li class="nav-item">
             <router-link to="/search" class="nav-link" active-class="active">Search</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/profile" class="nav-link" active-class="active">Profile</router-link>
+          </li>
         </ul>
       </div>
       <div v-if="isAuthenticated">

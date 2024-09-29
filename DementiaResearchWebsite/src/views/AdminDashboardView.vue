@@ -79,10 +79,26 @@ const fetchCarerRequests = async () => {
 const approveRequest = async (request) => {
   try {
     const userRef = doc(db, 'users', request.userId); // Assuming user information is stored in 'users' collection
-    await updateDoc(userRef, { role: 'carer' }); // Update role to 'carer'
-    await deleteDoc(doc(db, 'carerRequests', request.id)); // Delete the request
-    alert(`Approved and role updated for ${request.email}`);
-    fetchCarerRequests(); // Refresh the list
+
+    // Update the user's role to 'carer'
+    await updateDoc(userRef, { role: 'carer' });
+
+    // Create a new document in the 'carers' collection
+    const carerData = {
+      userId: request.userId,        // The user's ID
+      name: request.name,            // Assuming 'name' is part of the request
+      roleDesc: 'Carer',             // Default role description
+      rating: 0,                     // Initial rating
+      description: "I'm new here!!", // Default description
+    };
+    
+    await setDoc(doc(db, 'carers', request.userId), carerData); // Add a document with the user's ID in the 'carers' collection
+
+    // Delete the carer request from the 'carerRequests' collection
+    await deleteDoc(doc(db, 'carerRequests', request.id));
+
+    alert(`Approved and role updated for ${request.email}, carer profile created.`);
+    fetchCarerRequests(); // Refresh the list of carer requests
   } catch (error) {
     console.error("Error approving carer request:", error);
   }

@@ -153,9 +153,9 @@ const requestCarer = async () => {
         <button type="submit" class="btn btn-primary">Update Profile</button>
       </form>
 
-      <hr />
+      <hr v-if="role == 'user' " />
 
-      <div>
+      <div v-if="role == 'user' ">
         <h3>Request to be a Carer</h3>
         <p>Click the button below to request to become a carer:</p>
         <button @click="requestCarer" class="btn btn-warning">Request to be a Carer</button>

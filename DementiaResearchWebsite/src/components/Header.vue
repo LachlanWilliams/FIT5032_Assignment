@@ -1,5 +1,5 @@
 <script setup>
-import { isAuthenticated, name } from '@/main';
+import { isAuthenticated, name, role } from '@/main';
 import { RouterLink } from 'vue-router';
 
 const logout = () => {
@@ -30,6 +30,9 @@ const logout = () => {
           </li>
           <li class="nav-item">
             <router-link to="/profile" class="nav-link" active-class="active">Profile</router-link>
+          </li>
+          <li v-if="isAuthenticated && role === 'admin'" class="nav-item">
+              <router-link to="/admin-dashboard" class="nav-link" active-class="active">Admin Dashboard</router-link>
           </li>
         </ul>
       </div>

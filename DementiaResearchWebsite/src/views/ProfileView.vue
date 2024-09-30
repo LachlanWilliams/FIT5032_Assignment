@@ -1,13 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getAuth, updateEmail, updatePassword } from 'firebase/auth';
+import { getAuth, updateEmail, updatePassword, updateProfile } from 'firebase/auth';
 import { getFirestore, doc, updateDoc, getDoc, collection, addDoc } from 'firebase/firestore';
-import { isAuthenticated, role } from '@/main';
+import { isAuthenticated, role, name } from '@/main';
 
 const auth = getAuth();
 const db = getFirestore();
 
 const formData = ref({
+  name: '', // Add a field for the user's name
   email: '',
   newPassword: '',
   confirmPassword: '',
@@ -34,6 +35,7 @@ const fetchCarerData = async () => {
     if (carerSnapshot.exists()) {
       isCarer.value = true; // Set the flag to true if the user is a carer
       const carerData = carerSnapshot.data();
+      formData.value.name = user.displayName || ''; // Fetch the current name
       formData.value.description = carerData.description;
       formData.value.rating = carerData.rating;
     }
@@ -41,7 +43,6 @@ const fetchCarerData = async () => {
     console.log(error);
   }
 };
-console.log(fetchCarerData)
 
 // Validate Password Function
 const validatePassword = (blur) => {
@@ -80,9 +81,20 @@ const validateConfirmPassword = (blur) => {
 };
 
 // Update Profile Function
-const updateProfile = async () => {
+const updateUserProfile = async () => {
   try {
     const user = auth.currentUser;
+
+    // Update user name if it has changed
+    if (formData.value.name && formData.value.name !== user.displayName) {
+      await updateProfile(user, { displayName: formData.value.name });
+
+      await updateDoc(doc(db, 'users', user.uid), { name: formData.value.name });
+
+      name.value = formData.value.name
+
+      successMessage.value = 'Name updated successfully!';
+    }
 
     // Check if email needs updating
     if (formData.value.email && formData.value.email !== user.email) {
@@ -105,6 +117,7 @@ const updateProfile = async () => {
     if (isCarer.value) {
       const carerRef = doc(db, 'carers', user.uid);
       await updateDoc(carerRef, {
+        name: formData.value.name, // Update the carer's name
         description: formData.value.description, // Update description
         rating: formData.value.rating // Update rating if needed (you could make this non-editable if desired)
       });
@@ -154,7 +167,19 @@ onMounted(() => {
     <h1>Profile Page</h1>
 
     <div v-if="isAuthenticated">
-      <form @submit.prevent="updateProfile">
+      <form @submit.prevent="updateUserProfile">
+        
+        <!-- New Name Field -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            v-model="formData.name" 
+            placeholder="Update your name" 
+          />
+        </div>
+
         <div class="mb-3">
           <label for="email" class="form-label">New Email</label>
           <input 
@@ -219,28 +244,11 @@ onMounted(() => {
       <!-- Request Carer Section for non-carers -->
       <div v-if="!isCarer && role == 'user'">
         <h3>Request to be a Carer</h3>
-        <p>Click the button below to request to become a carer:</p>
-        <button @click="requestCarer" class="btn btn-warning">Request to be a Carer</button>
+        <button @click="requestCarer" class="btn btn-warning">Request Carer Status</button>
         <div v-if="errors.carerRequest" class="text-danger">{{ errors.carerRequest }}</div>
       </div>
 
-      <div v-if="successMessage" class="text-success mt-3">{{ successMessage }}</div>
-    </div>
-
-    <div v-else>
-      <p>Please log in to view your profile.</p>
+      <div v-if="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.mb-3 {
-  margin-bottom: 1rem;
-}
-</style>

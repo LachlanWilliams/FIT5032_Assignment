@@ -47,7 +47,7 @@ const routes = [
     component: ProfileView
   },
   {
-    path: '/carer/:name',
+    path: '/carer/:id',
     name: 'CarerDetails',
     component: () => import('@/views/CarerDetails.vue'),
     props: true

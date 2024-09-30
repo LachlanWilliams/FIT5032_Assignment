@@ -63,6 +63,11 @@ const routes = [
     name: 'AdminDashboard',
     component: AdminDashboardView,
     meta: { requiresAdmin: true } // Admin only route
+  },
+  {
+    path: '/SubmitResearch',
+    name: 'SubmitResearch',
+    component: () => import('@/views/SubmitResearchView.vue'),
   }
 ];
 

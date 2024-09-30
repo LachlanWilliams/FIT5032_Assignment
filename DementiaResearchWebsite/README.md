@@ -34,8 +34,6 @@ npm run build
 
 As per my interview with Gonazlo, I have come up with a list of necessary changes that need to be made by the next implementation of the website.
 
-- remove the option to select type in login
-- remove select admin in sign up
 - Admin dashboard showing all users and all carers (approved, pending, rejected)
 - Logging in users can request to be a carers which will take the user to a pending approval page
 - Carers will not have a be able to see the our carers page, instead have my profile page

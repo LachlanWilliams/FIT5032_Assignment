@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router';
 const logout = () => {
   isAuthenticated.value = false
   name.value = ''
+  role.value = 'user'
 }
 </script>
 

@@ -26,18 +26,54 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="request in carerRequests" :key="request.id">
+            <tr v-for="request in pendingRequests" :key="request.id">
               <td>{{ request.email }}</td>
               <td>{{ request.requestDate.toDate().toLocaleString() }}</td>
               <td>{{ request.status }}</td>
               <td>
-                <button @click="approveRequest(request)" class="btn btn-success">Approve</button>
-                <button @click="rejectRequest(request)" class="btn btn-danger">Reject</button>
+                <button @click="updateRequestStatus(request, 'accepted')" class="btn btn-success">Approve</button>
+                <button @click="updateRequestStatus(request, 'rejected')" class="btn btn-danger">Reject</button>
               </td>
             </tr>
           </tbody>
         </table>
         <p v-else>No carer requests at the moment.</p>
+
+        <h4>Accepted Requests</h4>
+        <table v-if="acceptedRequests.length > 0" class="table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Request Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="request in acceptedRequests" :key="request.id">
+              <td>{{ request.email }}</td>
+              <td>{{ request.requestDate.toDate().toLocaleString() }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h4>Rejected Requests</h4>
+        <table v-if="rejectedRequests.length > 0" class="table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Request Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="request in rejectedRequests" :key="request.id">
+              <td>{{ request.email }}</td>
+              <td>{{ request.requestDate.toDate().toLocaleString() }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- Reports Tab -->
@@ -57,14 +93,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 const db = getFirestore();
-const auth = getAuth();
 
 const activeTab = ref('users'); // Default to 'users' tab
 const carerRequests = ref([]); // To store carer requests
+const pendingRequests = ref([]); // To store only pending requests
+const acceptedRequests = ref([]); // To store accepted requests
+const rejectedRequests = ref([]); // To store rejected requests
 
 // Fetch carer requests from Firestore
 const fetchCarerRequests = async () => {
@@ -73,45 +110,27 @@ const fetchCarerRequests = async () => {
     id: doc.id,
     ...doc.data(),
   }));
+  
+  // Filter accepted and rejected requests
+  acceptedRequests.value = carerRequests.value.filter(request => request.status === 'accepted');
+  rejectedRequests.value = carerRequests.value.filter(request => request.status === 'rejected');
+  pendingRequests.value = carerRequests.value.filter(request => request.status === 'pending');
+
 };
 
-// Approve carer request: Update the user's role to 'carer' and delete the request
-const approveRequest = async (request) => {
+// Update the status of carer requests
+const updateRequestStatus = async (request, status) => {
   try {
-    const userRef = doc(db, 'users', request.userId); // Assuming user information is stored in 'users' collection
-
-    // Update the user's role to 'carer'
-    await updateDoc(userRef, { role: 'carer' });
-
-    // Create a new document in the 'carers' collection
-    const carerData = {
-      userId: request.userId,        // The user's ID
-      name: request.name,            // Assuming 'name' is part of the request
-      roleDesc: 'Carer',             // Default role description
-      rating: 0,                     // Initial rating
-      description: "I'm new here!!", // Default description
-    };
+    const requestRef = doc(db, 'carerRequests', request.id);
     
-    await setDoc(doc(db, 'carers', request.userId), carerData); // Add a document with the user's ID in the 'carers' collection
+    // Update request status
+    await updateDoc(requestRef, { status });
 
-    // Delete the carer request from the 'carerRequests' collection
-    await deleteDoc(doc(db, 'carerRequests', request.id));
-
-    alert(`Approved and role updated for ${request.email}, carer profile created.`);
-    fetchCarerRequests(); // Refresh the list of carer requests
+    // Refresh the list of carer requests
+    fetchCarerRequests();
+    alert(`Request from ${request.email} has been ${status}.`);
   } catch (error) {
-    console.error("Error approving carer request:", error);
-  }
-};
-
-// Reject carer request: Simply delete the request
-const rejectRequest = async (request) => {
-  try {
-    await deleteDoc(doc(db, 'carerRequests', request.id)); // Delete the request
-    alert(`Rejected request from ${request.email}`);
-    fetchCarerRequests(); // Refresh the list
-  } catch (error) {
-    console.error("Error rejecting carer request:", error);
+    console.error(`Error updating carer request status to ${status}:`, error);
   }
 };
 

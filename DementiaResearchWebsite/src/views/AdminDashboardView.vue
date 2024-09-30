@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { getAuth, updateProfile } from 'firebase/auth';
 
 const db = getFirestore();

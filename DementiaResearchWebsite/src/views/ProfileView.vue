@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getAuth, updateEmail, updatePassword } from 'firebase/auth';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { isAuthenticated, role } from '@/main';
 
 const auth = getAuth();
@@ -10,7 +10,9 @@ const db = getFirestore();
 const formData = ref({
   email: '',
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  description: '',
+  rating: 0 // Default rating
 });
 
 const errors = ref({
@@ -21,6 +23,25 @@ const errors = ref({
 });
 
 const successMessage = ref(null);
+const isCarer = ref(false); // Flag to check if the user is a carer
+
+const fetchCarerData = async () => {
+  try {
+    const user = auth.currentUser;
+    const carerRef = doc(db, 'carers', user.uid);
+    const carerSnapshot = await getDoc(carerRef);
+
+    if (carerSnapshot.exists()) {
+      isCarer.value = true; // Set the flag to true if the user is a carer
+      const carerData = carerSnapshot.data();
+      formData.value.description = carerData.description;
+      formData.value.rating = carerData.rating;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+console.log(fetchCarerData)
 
 // Validate Password Function
 const validatePassword = (blur) => {
@@ -80,6 +101,16 @@ const updateProfile = async () => {
       }
     }
 
+    // Update Carer Information if the user is a carer
+    if (isCarer.value) {
+      const carerRef = doc(db, 'carers', user.uid);
+      await updateDoc(carerRef, {
+        description: formData.value.description, // Update description
+        rating: formData.value.rating // Update rating if needed (you could make this non-editable if desired)
+      });
+      successMessage.value = 'Carer profile updated successfully!';
+    }
+
   } catch (error) {
     console.error(error);
     errors.value.email = 'Failed to update email.';
@@ -91,10 +122,12 @@ const updateProfile = async () => {
 const requestCarer = async () => {
   try {
     const user = auth.currentUser;
+    const userName = user.displayName || 'Anonymous'; // Fetch the display name, fallback to 'Anonymous' if not set
 
     // Add a request to Firestore
     await addDoc(collection(db, 'carerRequests'), {
       userId: user.uid,
+      name: userName, // Include the user's name in the request
       email: user.email,
       requestDate: new Date(),
       status: 'pending'
@@ -106,6 +139,13 @@ const requestCarer = async () => {
     errors.value.carerRequest = 'Failed to submit carer request.';
   }
 };
+
+// On component mounted, check if the user is a carer
+onMounted(() => {
+  if (isAuthenticated.value && role.value === 'carer') {
+    fetchCarerData();
+  }
+});
 
 </script>
 
@@ -150,12 +190,34 @@ const requestCarer = async () => {
           <div v-if="errors.confirm" class="text-danger">{{ errors.confirm }}</div>
         </div>
 
+        <!-- Carer Section: Allow updating description and rating -->
+        <div v-if="isCarer">
+          <div class="mb-3">
+            <label for="description" class="form-label">Carer Description</label>
+            <textarea 
+              class="form-control" 
+              v-model="formData.description" 
+              placeholder="Update your carer description"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="rating" class="form-label">Rating (you can make this readonly)</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              v-model="formData.rating" 
+              readonly 
+            />
+          </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Update Profile</button>
       </form>
 
-      <hr v-if="role == 'user' " />
+      <hr v-if="!isCarer && role == 'user'" />
 
-      <div v-if="role == 'user' ">
+      <!-- Request Carer Section for non-carers -->
+      <div v-if="!isCarer && role == 'user'">
         <h3>Request to be a Carer</h3>
         <p>Click the button below to request to become a carer:</p>
         <button @click="requestCarer" class="btn btn-warning">Request to be a Carer</button>

@@ -40,7 +40,7 @@ const submitResearch = async () => {
         links: links.value, // This is an array of links
         publisher: publisher.value,
         date: date.value,
-        underReview: true, // Set underReview to true
+        status: "pending", // Set status to true
         submittedBy: user.uid, // Save the user ID of the person who submitted the research
         submittedAt: new Date(), // Capture the current date
       };
@@ -61,7 +61,7 @@ const submitResearch = async () => {
 </script>
 
 <template>
-  <h1>Submit Research for Review</h1>
+  <h1>Submit Research</h1>
 
   <form @submit.prevent="submitResearch" class="submit-research-form">
     <div>

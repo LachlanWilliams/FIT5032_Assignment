@@ -1,9 +1,8 @@
 <script setup>
-import research from "../assets/JSON/research.json";
 import ResearchCard from "@/components/ResearchCard.vue";
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 // Firebase setup
@@ -14,9 +13,12 @@ const router = useRouter();
 // Reactive variable to store if the user is a carer
 const isCarer = ref(false);
 
+// Reactive variable to store research papers
+const researchPapers = ref([]);
+
 // Function to navigate to the research details page
-const navigateToResearch = (title) => {
-  router.push({ name: 'ResearchDetails', params: { title } });
+const navigateToResearch = (id) => {
+  router.push({ name: 'ResearchDetails', params: { id } });
 };
 
 // Function to check if the user is a carer
@@ -30,9 +32,24 @@ const checkIfCarer = async () => {
   }
 };
 
-// Call the function on component mount
+// Function to fetch research papers that are under review from Firestore
+const fetchResearchPapers = async () => {
+  const researchQuery = query(
+    collection(db, 'research'), 
+    where('status', '==', "approved")
+  );
+  
+  const querySnapshot = await getDocs(researchQuery);
+  researchPapers.value = querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+
+// Call the functions on component mount
 onMounted(() => {
   checkIfCarer();
+  fetchResearchPapers(); // Fetch research papers when the component is mounted
 });
 </script>
 
@@ -47,12 +64,12 @@ onMounted(() => {
 
   <div>
     <ResearchCard
-      v-for="researchitem in research"
-      :key="researchitem.title"
-      :title="researchitem.title"
-      :publisher="researchitem.publisher"
-      :date="researchitem.date"
-      @click="navigateToResearch(researchitem.title)"
+      v-for="researchItem in researchPapers"
+      :key="researchItem.id"
+      :title="researchItem.title"
+      :publisher="researchItem.publisher"
+      :date="researchItem.date"
+      @click="navigateToResearch(researchItem.id)"
       class="clickable-card"
     />
   </div>

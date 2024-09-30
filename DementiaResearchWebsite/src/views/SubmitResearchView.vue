@@ -63,7 +63,7 @@ const submitResearch = async () => {
 <template>
   <h1>Submit Research for Review</h1>
 
-  <form @submit.prevent="submitResearch">
+  <form @submit.prevent="submitResearch" class="submit-research-form">
     <div>
       <label for="title">Title</label>
       <input v-model="title" type="text" id="title" required />
@@ -111,6 +111,15 @@ const submitResearch = async () => {
 </template>
 
 <style scoped>
+
+.submit-research-form {
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 form {
   display: flex;
   flex-direction: column;

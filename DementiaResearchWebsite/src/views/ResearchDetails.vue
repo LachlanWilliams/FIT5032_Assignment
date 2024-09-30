@@ -91,13 +91,34 @@ const validateComments = (blur) => {
 <template>
   <div v-if="researchItem">
     <h1>{{ researchItem.title }}</h1>
-    <h2>{{ researchItem.publisher }}</h2>
-    <p>{{ researchItem.precontent }}</p>
-    <p>Date published: {{ researchItem.date }}</p>
+    <h2>Publisher: {{ researchItem.publisher }}</h2>
+    <h3>{{ researchItem.precontent }}</h3>
     
+    
+    <!-- Display content with subtitles and subcontents -->
+    <div v-if="researchItem.content && researchItem.content.length">
+      <h4>Research Content:</h4>
+      <div v-for="(item, index) in researchItem.content" :key="index">
+        <h4>{{ item.subtitle }}</h4>
+        <p>{{ item.subcontent }}</p>
+      </div>
+    </div>
+
+    <!-- Display list of links -->
+    <div v-if="researchItem.links && researchItem.links.length">
+      <h4>Related Links:</h4>
+      <ul>
+        <li v-for="(link, index) in researchItem.links" :key="index">
+          <a :href="link.url" target="_blank">{{ link }}</a>
+        </li>
+      </ul>
+    </div>
+
+    <p>Date published: {{ researchItem.date }}</p>
+
     <!-- Display average rating -->
     <Rating v-model="averageRating" readonly />
-    <p v-if="submittedReviews.length">Average Rating: {{ averageRating }}</p>
+    <p v-if="submittedReviews.length">Average Rating: {{ averageRating.toFixed(1) }}</p>
 
     <!-- Button to submit a review -->
     <p>Leave a review</p>

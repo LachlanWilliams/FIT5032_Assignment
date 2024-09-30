@@ -34,5 +34,14 @@ npm run build
 
 As per my interview with Gonazlo, I have come up with a list of necessary changes that need to be made by the next implementation of the website.
 
-- Admin can add research pages in
+- Email carer once approved
+- Admin bulk email all users
+- interactive table
+- Deployment to the cloud
+- Cloud functions
+- Geo locations
+- Export research papers as PDF
+- Admin see number of users
+- Search functions
+- genAI in search ?
 - Carer, once approved has to complete their profile

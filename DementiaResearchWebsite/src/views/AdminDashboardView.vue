@@ -159,8 +159,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import sgMail from '@sendgrid/mail';
 
 const db = getFirestore();
+//const sgMail = require('@sendgrid/mail')
+
+sgMail.setApiKey(import.meta.env.VITE_SENDGRID_API_KEY)
 
 const activeTab = ref('users'); // Default to 'users' tab
 
@@ -186,6 +190,37 @@ const fetchCarerRequests = async () => {
   rejectedRequests.value = carerRequests.value.filter(request => request.status === 'rejected');
 };
 
+const sendApprovalEmail = async (email) => {
+  const msg = {
+  to: 'test@example.com', // Change to your recipient
+  from: 'test@example.com', // Change to your verified sender
+  subject: 'Sending with SendGrid is Fun',
+  text: 'and easy to do anywhere, even with Node.js',
+  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+}
+sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent')
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+  // const message = {
+  //   to: email,
+  //   from: 'your-email@domain.com', // Replace with your SendGrid verified sender email
+  //   subject: 'Carer Request Approved',
+  //   text: 'Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.',
+  // };
+
+  // try {
+  //   await sgMail.send(message);
+  //   console.log('Approval email sent to:', email);
+  // } catch (error) {
+  //   console.error('Error sending approval email:', error);
+  // }
+};
+
 // Fetch research papers from Firestore
 const fetchResearch = async () => {
   const querySnapshot = await getDocs(collection(db, 'research'));
@@ -206,6 +241,11 @@ const updateRequestStatus = async (request, status) => {
     await updateDoc(requestRef, { status });
     fetchCarerRequests();
     alert(`Request from ${request.email} has been ${status}.`);
+
+    // Send approval email if status is 'accepted'
+    if (status === 'accepted') {
+      sendApprovalEmail(request.email);
+    }
   } catch (error) {
     console.error(`Error updating request status to ${status}:`, error);
   }

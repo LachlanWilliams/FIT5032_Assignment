@@ -40,7 +40,6 @@ As per my interview with Gonazlo, I have come up with a list of necessary change
 - Deployment to the cloud
 - Cloud functions
 - Geo locations
-- Export research papers as PDF
 - Admin see number of users
 - Search functions
 - genAI in search ?

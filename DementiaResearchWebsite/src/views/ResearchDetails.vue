@@ -6,6 +6,7 @@ import Rating from 'primevue/rating';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
+import jsPDF from 'jspdf';
 
 // Firebase setup
 const db = getFirestore();
@@ -86,6 +87,61 @@ const validateComments = (blur) => {
     errors.value.comments = null;
   }
 };
+
+// Function to export research as PDF
+// Function to export research as PDF
+const exportToPDF = () => {
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+
+  // Ensure the researchItem data exists and is valid
+  const title = researchItem.value?.title || 'No Title';
+  const publisher = researchItem.value?.publisher || 'Unknown Publisher';
+  const date = researchItem.value?.date || 'No Date Available';
+  const precontent = researchItem.value?.precontent || '';
+
+  // Adding the title and other details
+  doc.text(title, 10, 10);
+  doc.setFontSize(14);
+  doc.text(`Publisher: ${publisher}`, 10, 20);
+  doc.text(`Date published: ${date}`, 10, 30);
+  doc.setFontSize(12);
+  doc.text(precontent, 10, 40);
+
+  // Add content sections
+  let y = 60;
+  if (researchItem.value.content && researchItem.value.content.length) {
+    doc.text('Research Content:', 10, 50);
+    researchItem.value.content.forEach(item => {
+      const subtitle = item.subtitle || 'No Subtitle';
+      const subcontent = item.subcontent || 'No Content';
+
+      doc.setFontSize(12);
+      doc.text(subtitle, 10, y);
+      doc.setFontSize(10);
+      y += 10;
+      doc.text(subcontent, 10, y);
+      y += 10;
+    });
+  }
+
+  // Add related links
+  if (researchItem.value.links && researchItem.value.links.length) {
+    doc.setFontSize(12);
+    doc.text('Related Links:', 10, y);
+    y += 10;
+    researchItem.value.links.forEach(link => {
+      const linkTitle = link || 'No Link';
+      doc.setFontSize(10);
+      doc.text(linkTitle, 10, y);
+      y += 10;
+    });
+  }
+
+  // Save the PDF
+  doc.save('research.pdf');
+};
+
 </script>
 
 <template>
@@ -93,8 +149,7 @@ const validateComments = (blur) => {
     <h1>{{ researchItem.title }}</h1>
     <h2>Publisher: {{ researchItem.publisher }}</h2>
     <h3>{{ researchItem.precontent }}</h3>
-    
-    
+
     <!-- Display content with subtitles and subcontents -->
     <div v-if="researchItem.content && researchItem.content.length">
       <h4>Research Content:</h4>
@@ -109,12 +164,15 @@ const validateComments = (blur) => {
       <h4>Related Links:</h4>
       <ul>
         <li v-for="(link, index) in researchItem.links" :key="index">
-          <a :href="link.url" target="_blank">{{ link }}</a>
+          <a :href="link" target="_blank">{{ link }}</a>
         </li>
       </ul>
     </div>
 
     <p>Date published: {{ researchItem.date }}</p>
+
+    <!-- Button to export research as PDF -->
+    <Button @click="exportToPDF" label="Export as PDF" severity="Secondary" outlined />
 
     <!-- Display average rating -->
     <Rating v-model="averageRating" readonly />

@@ -191,35 +191,30 @@ const fetchCarerRequests = async () => {
 };
 
 const sendApprovalEmail = async (email) => {
-  const msg = {
-  to: 'test@example.com', // Change to your recipient
-  from: 'test@example.com', // Change to your verified sender
-  subject: 'Sending with SendGrid is Fun',
-  text: 'and easy to do anywhere, even with Node.js',
-  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-}
-sgMail
-  .send(msg)
-  .then(() => {
-    console.log('Email sent')
-  })
-  .catch((error) => {
-    console.error(error)
-  })
-  // const message = {
-  //   to: email,
-  //   from: 'your-email@domain.com', // Replace with your SendGrid verified sender email
-  //   subject: 'Carer Request Approved',
-  //   text: 'Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.',
-  // };
+  const message = {
+    to: email,
+    subject: 'Carer Request Approved',
+    text: 'Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.',
+    html: '<strong>Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.</strong>',
+  };
 
-  // try {
-  //   await sgMail.send(message);
-  //   console.log('Approval email sent to:', email);
-  // } catch (error) {
-  //   console.error('Error sending approval email:', error);
-  // }
+  try {
+    const response = await fetch('http://localhost:3000/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    if (!response.ok) {
+      throw new Error('Error sending email');
+    }
+    console.log('Approval email sent to:', email);
+  } catch (error) {
+    console.error('Error sending approval email:', error);
+  }
 };
+
 
 // Fetch research papers from Firestore
 const fetchResearch = async () => {

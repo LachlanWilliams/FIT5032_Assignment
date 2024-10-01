@@ -1,11 +1,11 @@
 // backend/src/app.js
-import express, { json } from 'express';
-import cors from 'cors';
-import emailRoutes from './routes/emailRoutes';
+const express = require('express');
+const cors = require('cors');
+const emailRoutes = require('./routes/emailRoutes');
 
 const app = express();
 app.use(cors());
-app.use(json()); // Parse JSON request bodies
+app.use(express.json()); // Parse JSON request bodies
 
 app.use('/api', emailRoutes); // Mount the email routes under /api
 

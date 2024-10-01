@@ -1,7 +1,7 @@
 // backend/src/controllers/emailController.js
-import { setApiKey, send } from '@sendgrid/mail';
+const sgMail = require('@sendgrid/mail');
 
-setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.VITE_SENDGRID_API_KEY);
 
 const sendEmail = async (req, res) => {
   const { to, subject, text } = req.body;
@@ -13,7 +13,7 @@ const sendEmail = async (req, res) => {
   };
 
   try {
-    await send(msg);
+    await sgMail.send(msg);
     res.status(200).send('Email sent successfully!');
   } catch (error) {
     console.error(error);
@@ -21,4 +21,4 @@ const sendEmail = async (req, res) => {
   }
 };
 
-export default { sendEmail };
+module.exports = { sendEmail };

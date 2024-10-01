@@ -41,6 +41,5 @@ As per my interview with Gonazlo, I have come up with a list of necessary change
 - Cloud functions
 - Geo locations
 - Admin see number of users
-- Search functions
 - genAI in search ?
 - Carer, once approved has to complete their profile

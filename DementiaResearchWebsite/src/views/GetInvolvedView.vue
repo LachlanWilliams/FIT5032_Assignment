@@ -29,6 +29,8 @@ const monashCoordinates = [145.1346, -37.9105]; // Coordinates of Monash Univers
 const searchQuery = ref("");
 const map = ref(null);
 const startCoordinates = ref(null);
+const startMarker = ref(null);
+const endMarker = ref(null);
 
 // Initialize the map
 onMounted(() => {
@@ -42,6 +44,11 @@ onMounted(() => {
 
   // Add navigation controls to the map
   map.value.addControl(new mapboxgl.NavigationControl());
+
+  // Add a marker at Monash University Clayton
+  endMarker.value = new mapboxgl.Marker({ color: "green" })
+    .setLngLat(monashCoordinates)
+    .addTo(map.value);
 });
 
 // Function to search for a location using Mapbox Geocoding API
@@ -59,10 +66,21 @@ const searchLocation = async () => {
     
     if (response.data.features.length > 0) {
       startCoordinates.value = response.data.features[0].geometry.coordinates;
+
+      // Move the map to the searched location
       map.value.flyTo({
         center: startCoordinates.value,
         zoom: 14,
       });
+
+      // Add or update the start marker
+      if (startMarker.value) {
+        startMarker.value.setLngLat(startCoordinates.value);
+      } else {
+        startMarker.value = new mapboxgl.Marker({ color: "red" })
+          .setLngLat(startCoordinates.value)
+          .addTo(map.value);
+      }
     } else {
       alert("Location not found.");
     }

@@ -40,6 +40,5 @@ As per my interview with Gonazlo, I have come up with a list of necessary change
 - Deployment to the cloud
 - Cloud functions
 - Geo locations
-- Admin see number of users
 - genAI in search ?
 - Carer, once approved has to complete their profile

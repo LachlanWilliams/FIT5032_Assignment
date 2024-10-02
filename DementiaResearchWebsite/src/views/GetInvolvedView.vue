@@ -9,49 +9,43 @@
     <input type="text" v-model="searchQuery" @keydown.enter="searchLocation" placeholder="Search location" />
 
     <!-- Button to find route -->
-    <button @click="findRoute">Find Route to Monash Clayton</button>
+    <button @click="findRoute">Find Route</button>
 
     <!-- Map container for displaying the Mapbox map -->
-    <div id="map" class="map-container"></div>
+    <div id="mapContainer" ref="mapContainer" class="map-container" style="height: 400px;"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import mapboxgl from "mapbox-gl";
-import axios from "axios";
+import { ref, onMounted } from 'vue';
+import mapboxgl from 'mapbox-gl'; // Mapbox GL JS
+import 'mapbox-gl/dist/mapbox-gl.css';
+import axios from 'axios';
 
-// API keys and Monash University Clayton coordinates
 const mapboxApiKey = import.meta.env.VITE_MAP_BOX_API_KEY;
-const monashCoordinates = [145.1346, -37.9105]; // Coordinates of Monash University Clayton
+const dementiaAustraliaCoords = [145.035, -37.824]; // Hawthorn, Victoria coordinates
 
-// Refs to hold search query, map object, and start location
-const searchQuery = ref("");
+// Refs and state variables
 const map = ref(null);
-const startCoordinates = ref(null);
-const startMarker = ref(null);
-const endMarker = ref(null);
+const searchQuery = ref('');
+const userLocation = ref(null);
 
 // Initialize the map
 onMounted(() => {
+  mapboxgl.accessToken = mapboxApiKey;
   map.value = new mapboxgl.Map({
-    container: "map",
-    style: "mapbox://styles/mapbox/streets-v11",
-    center: monashCoordinates,
-    zoom: 15,
-    accessToken: mapboxApiKey,
+    container: 'mapContainer',
+    style: 'mapbox://styles/mapbox/streets-v11', // Mapbox style
+    center: dementiaAustraliaCoords, // Initial center at Dementia Australia Hawthorn
+    zoom: 14,
   });
 
-  // Add navigation controls to the map
+  // Add navigation controls (zoom in/out)
   map.value.addControl(new mapboxgl.NavigationControl());
-
-  // Add a marker at Monash University Clayton
-  endMarker.value = new mapboxgl.Marker({ color: "green" })
-    .setLngLat(monashCoordinates)
-    .addTo(map.value);
+  new mapboxgl.Marker().setLngLat(dementiaAustraliaCoords).addTo(map.value);
 });
 
-// Function to search for a location using Mapbox Geocoding API
+// Function to search for a location
 const searchLocation = async () => {
   try {
     const response = await axios.get(
@@ -63,102 +57,73 @@ const searchLocation = async () => {
         },
       }
     );
-    
-    if (response.data.features.length > 0) {
-      startCoordinates.value = response.data.features[0].geometry.coordinates;
+    const [longitude, latitude] = response.data.features[0].geometry.coordinates;
+    userLocation.value = [longitude, latitude];
 
-      // Move the map to the searched location
-      map.value.flyTo({
-        center: startCoordinates.value,
-        zoom: 14,
-      });
+    // Set the new center to user's searched location
+    map.value.flyTo({
+      center: userLocation.value,
+      essential: true,
+      zoom: 14,
+    });
 
-      // Add or update the start marker
-      if (startMarker.value) {
-        startMarker.value.setLngLat(startCoordinates.value);
-      } else {
-        startMarker.value = new mapboxgl.Marker({ color: "red" })
-          .setLngLat(startCoordinates.value)
-          .addTo(map.value);
-      }
-    } else {
-      alert("Location not found.");
-    }
+    // Add marker at the user's searched location
+    new mapboxgl.Marker().setLngLat(userLocation.value).addTo(map.value);
   } catch (error) {
-    console.error("Error searching location:", error);
+    console.error('Error searching location:', error);
   }
 };
 
-// Function to find a route from the searched location to Monash University Clayton
+// Function to find a route from user's location to Dementia Australia Hawthorn
 const findRoute = async () => {
-  if (!startCoordinates.value) {
-    alert("Please search for a starting location first.");
+  if (!userLocation.value) {
+    alert('Please search for a location first.');
     return;
   }
 
   try {
     const response = await axios.get(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${startCoordinates.value.join(",")};${monashCoordinates.join(",")}`,
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${userLocation.value[0]},${userLocation.value[1]};${dementiaAustraliaCoords[0]},${dementiaAustraliaCoords[1]}`,
       {
         params: {
           access_token: mapboxApiKey,
-          geometries: "geojson",
+          geometries: 'geojson',
         },
       }
     );
 
     const route = response.data.routes[0].geometry;
 
-    // Add route line to the map
-    if (map.value.getSource("route")) {
-      map.value.getSource("route").setData(route);
+    // Add the route to the map as a layer
+    if (map.value.getSource('route')) {
+      map.value.getSource('route').setData(route);
     } else {
       map.value.addLayer({
-        id: "route",
-        type: "line",
+        id: 'route',
+        type: 'line',
         source: {
-          type: "geojson",
+          type: 'geojson',
           data: route,
         },
         layout: {
-          "line-join": "round",
-          "line-cap": "round",
+          'line-join': 'round',
+          'line-cap': 'round',
         },
         paint: {
-          "line-color": "#3887be",
-          "line-width": 5,
+          'line-color': '#3887be',
+          'line-width': 5,
         },
       });
     }
   } catch (error) {
-    console.error("Error finding route:", error);
+    console.error('Error finding route:', error);
   }
 };
 </script>
 
 <style>
-.about {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
 .map-container {
   width: 100%;
   height: 400px;
-  margin-top: 20px;
-}
-
-input {
-  margin-bottom: 10px;
-  padding: 8px;
-  width: 100%;
-  max-width: 400px;
-  font-size: 16px;
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  cursor: pointer;
 }
 </style>

@@ -151,9 +151,11 @@
       <div v-if="activeTab === 'settings'">
         <h3>Settings</h3>
         <h4>Carer count</h4>
-        <button @click="getCarerCount">Get Carer Count</button>
+        <button @click="getStats">Get Stats</button>
         <p v-if="carerCount != 0">Total number of Carers: {{ carerCount }}</p>
         <p v-if="carerCount != 0">{{ carerCountError }}</p>
+        <p v-if="userCount != 0">Total number of User: {{ userCount }}</p>
+        <p v-if="userCount != 0">{{ userCountError }}</p>
       </div>
     </div>
   </div>
@@ -183,6 +185,8 @@ const rejectedResearch = ref([]);
 
 const carerCount = ref(null);
 const carerCountError = ref(null);
+const userCount = ref(null);
+const userCountError = ref(null);
 
 // Fetch carer requests from Firestore
 const fetchCarerRequests = async () => {
@@ -275,6 +279,23 @@ const getCarerCount = async () => {
     carerCountError.value = error;
     carerCount.value = null
   }
+}
+
+const getUserCount = async () => {
+  try {
+    const response = await axios.get('https://countusers-hereasb4ba-uc.a.run.app');
+    userCount.value = response.data.count;
+    userCountError.value = null;
+  } catch (error){
+    console.error('Error fetching User count: ', error);
+    userCountError.value = error;
+    userCount.value = null
+  }
+}
+
+const getStats = async () => {
+    getUserCount()
+    getCarerCount()
 }
 
 onMounted(() => {

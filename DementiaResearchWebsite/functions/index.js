@@ -8,12 +8,24 @@
  */
 
 const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+// const logger = require("firebase-functions/logger");
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+const admin = require("firebase-admin");
+const cors = require("cors")({origin: true});
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+
+exports.countCarers = onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const carersCollection = admin.firestore().collection("carers");
+      const snapshot = await carersCollection.get();
+      const count = snapshot.size;
+
+      res.status(200).send({count});
+    } catch (error) {
+      console.error("Error counting carers:", error.message);
+      res.status(500).send("Error counting carers");
+    }
+  });
+});

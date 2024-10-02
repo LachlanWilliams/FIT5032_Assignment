@@ -150,7 +150,10 @@
       <!-- Settings Tab -->
       <div v-if="activeTab === 'settings'">
         <h3>Settings</h3>
-        <p>Here you can configure application settings.</p>
+        <h4>Carer count</h4>
+        <button @click="getCarerCount">Get Carer Count</button>
+        <p v-if="carerCount != 0">Total number of Carers: {{ carerCount }}</p>
+        <p v-if="carerCount != 0">{{ carerCountError }}</p>
       </div>
     </div>
   </div>
@@ -160,6 +163,7 @@
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import sgMail from '@sendgrid/mail';
+import axios from 'axios';
 
 const db = getFirestore();
 //const sgMail = require('@sendgrid/mail')
@@ -176,6 +180,9 @@ const rejectedRequests = ref([]);
 const pendingResearch = ref([]);
 const approvedResearch = ref([]);
 const rejectedResearch = ref([]);
+
+const carerCount = ref(null);
+const carerCountError = ref(null);
 
 // Fetch carer requests from Firestore
 const fetchCarerRequests = async () => {
@@ -257,6 +264,18 @@ const updateResearchStatus = async (research, status) => {
     console.error(`Error updating research status to ${status}:`, error);
   }
 };
+
+const getCarerCount = async () => {
+  try {
+    const response = await axios.get('https://countcarers-hereasb4ba-uc.a.run.app');
+    carerCount.value = response.data.count;
+    carerCountError.value = null;
+  } catch (error){
+    console.error('Error fetching Carer count: ', error);
+    carerCountError.value = error;
+    carerCount.value = null
+  }
+}
 
 onMounted(() => {
   fetchCarerRequests(); // Fetch carer requests

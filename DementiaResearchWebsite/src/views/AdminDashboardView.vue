@@ -164,13 +164,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
-import sgMail from '@sendgrid/mail';
 import axios from 'axios';
 
 const db = getFirestore();
-//const sgMail = require('@sendgrid/mail')
-
-sgMail.setApiKey(import.meta.env.VITE_SENDGRID_API_KEY)
 
 const activeTab = ref('users'); // Default to 'users' tab
 
@@ -201,31 +197,6 @@ const fetchCarerRequests = async () => {
   rejectedRequests.value = carerRequests.value.filter(request => request.status === 'rejected');
 };
 
-const sendApprovalEmail = async (email) => {
-  const message = {
-    to: email,
-    subject: 'Carer Request Approved',
-    text: 'Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.',
-    html: '<strong>Congratulations, you have been approved to be a carer for Dementia Research Australia. Please proceed to your profile to update your carer description.</strong>',
-  };
-
-  try {
-    const response = await fetch('http://localhost:3000/send-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-    if (!response.ok) {
-      throw new Error('Error sending email');
-    }
-    console.log('Approval email sent to:', email);
-  } catch (error) {
-    console.error('Error sending approval email:', error);
-  }
-};
-
 
 // Fetch research papers from Firestore
 const fetchResearch = async () => {
@@ -247,11 +218,6 @@ const updateRequestStatus = async (request, status) => {
     await updateDoc(requestRef, { status });
     fetchCarerRequests();
     alert(`Request from ${request.email} has been ${status}.`);
-
-    // Send approval email if status is 'accepted'
-    if (status === 'accepted') {
-      sendApprovalEmail(request.email);
-    }
   } catch (error) {
     console.error(`Error updating request status to ${status}:`, error);
   }

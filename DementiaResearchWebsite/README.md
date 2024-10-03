@@ -38,7 +38,5 @@ As per my interview with Gonazlo, I have come up with a list of necessary change
 - Admin bulk email all users
 - interactive table
 - Deployment to the cloud
-- Cloud functions
-- Geo locations
 - genAI in search ?
 - Carer, once approved has to complete their profile

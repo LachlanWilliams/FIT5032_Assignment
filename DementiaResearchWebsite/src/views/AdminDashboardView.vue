@@ -216,7 +216,16 @@ const updateRequestStatus = async (request, status) => {
   try {
     const requestRef = doc(db, 'carerRequests', request.id);
     await updateDoc(requestRef, { status });
-    fetchCarerRequests();
+
+    if (status === 'accepted') {
+      // Send email to the accepted carer
+      await axios.post('http://localhost:3000/send-acceptance-email', {
+        email: request.email,
+        name: request.name,  // Assuming request contains the carer's name
+      });
+    }
+
+    fetchCarerRequests(); // Refresh the list of requests
     alert(`Request from ${request.email} has been ${status}.`);
   } catch (error) {
     console.error(`Error updating request status to ${status}:`, error);

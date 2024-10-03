@@ -24,7 +24,6 @@
     "mapbox-gl": "^3.7.0",
     "primevue": "^4.0.4",
     "vue": "^3.4.29",
-    "vue-mapbox": "^0.4.1",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {

@@ -1,19 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getAuth, updateEmail, updatePassword, updateProfile } from 'firebase/auth';
-import { getFirestore, doc, updateDoc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, doc, updateDoc, getDoc, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { isAuthenticated, role, name } from '@/main';
 
 const auth = getAuth();
 const db = getFirestore();
 
 const formData = ref({
-  name: '', // Add a field for the user's name
+  name: '',
   email: '',
   newPassword: '',
   confirmPassword: '',
   description: '',
-  rating: 0 // Default rating
+  rating: 0
 });
 
 const errors = ref({
@@ -24,8 +24,10 @@ const errors = ref({
 });
 
 const successMessage = ref(null);
-const isCarer = ref(false); // Flag to check if the user is a carer
+const isCarer = ref(false); // Flag to check if the user is already a carer
+const hasRequestedCarer = ref(false); // Flag to check if the user has already requested to be a carer
 
+// Fetch carer data if the user is already a carer
 const fetchCarerData = async () => {
   try {
     const user = auth.currentUser;
@@ -33,9 +35,9 @@ const fetchCarerData = async () => {
     const carerSnapshot = await getDoc(carerRef);
 
     if (carerSnapshot.exists()) {
-      isCarer.value = true; // Set the flag to true if the user is a carer
+      isCarer.value = true;
       const carerData = carerSnapshot.data();
-      formData.value.name = user.displayName || ''; // Fetch the current name
+      formData.value.name = user.displayName || '';
       formData.value.description = carerData.description;
       formData.value.rating = carerData.rating;
     }
@@ -44,122 +46,61 @@ const fetchCarerData = async () => {
   }
 };
 
-// Validate Password Function
-const validatePassword = (blur) => {
-  const password = formData.value.newPassword;
-  const minLength = 8;
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /\d/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-  if (password.length < minLength) {
-    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`;
-  } else if (!hasUppercase) {
-    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.';
-  } else if (!hasLowercase) {
-    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.';
-  } else if (!hasNumber) {
-    if (blur) errors.value.password = 'Password must contain at least one number.';
-  } else if (!hasSpecialChar) {
-    if (blur) errors.value.password = 'Password must contain at least one special character.';
-  } else {
-    errors.value.password = null;
-  }
-};
-
-// Validate Confirm Password Function
-const validateConfirmPassword = (blur) => {
-  const confirmPassword = formData.value.confirmPassword;
-  const password = formData.value.newPassword;
-
-  if (confirmPassword !== password) {
-    if (blur) errors.value.confirm = 'Confirm password must be the same as the password.';
-  } else {
-    errors.value.confirm = null;
-  }
-};
-
-// Update Profile Function
-const updateUserProfile = async () => {
+// Check if the user has already sent a carer request
+const checkExistingCarerRequest = async () => {
   try {
     const user = auth.currentUser;
+    const carerRequestQuery = query(
+      collection(db, 'carerRequests'),
+      where('userId', '==', user.uid),
+      where('status', '==', 'pending')
+    );
+    const carerRequestSnapshot = await getDocs(carerRequestQuery);
 
-    // Update user name if it has changed
-    if (formData.value.name && formData.value.name !== user.displayName) {
-      await updateProfile(user, { displayName: formData.value.name });
-
-      await updateDoc(doc(db, 'users', user.uid), { name: formData.value.name });
-
-      name.value = formData.value.name
-
-      successMessage.value = 'Name updated successfully!';
+    if (!carerRequestSnapshot.empty) {
+      hasRequestedCarer.value = true;
     }
-
-    // Check if email needs updating
-    if (formData.value.email && formData.value.email !== user.email) {
-      await updateEmail(user, formData.value.email);
-      successMessage.value = 'Email updated successfully!';
-    }
-
-    // Check if password needs updating and validate it
-    if (formData.value.newPassword && !errors.value.password && !errors.value.confirm) {
-      await updatePassword(user, formData.value.newPassword);
-      successMessage.value = 'Password updated successfully!';
-    } else {
-      if (formData.value.newPassword) {
-        validatePassword(true); // Trigger validation for password
-        validateConfirmPassword(true); // Trigger validation for confirm password
-      }
-    }
-
-    // Update Carer Information if the user is a carer
-    if (isCarer.value) {
-      const carerRef = doc(db, 'carers', user.uid);
-      await updateDoc(carerRef, {
-        name: formData.value.name, // Update the carer's name
-        description: formData.value.description, // Update description
-        rating: formData.value.rating // Update rating if needed (you could make this non-editable if desired)
-      });
-      successMessage.value = 'Carer profile updated successfully!';
-    }
-
   } catch (error) {
-    console.error(error);
-    errors.value.email = 'Failed to update email.';
-    errors.value.password = 'Failed to update password.';
+    console.error('Error checking for existing carer request:', error);
   }
 };
 
 // Request to be a carer
 const requestCarer = async () => {
+  if (hasRequestedCarer.value) {
+    errors.value.carerRequest = 'You have already submitted a carer request.';
+    return;
+  }
+
   try {
     const user = auth.currentUser;
-    const userName = user.displayName || 'Anonymous'; // Fetch the display name, fallback to 'Anonymous' if not set
+    const userName = user.displayName || 'Anonymous';
 
     // Add a request to Firestore
     await addDoc(collection(db, 'carerRequests'), {
       userId: user.uid,
-      name: userName, // Include the user's name in the request
+      name: userName,
       email: user.email,
       requestDate: new Date(),
       status: 'pending'
     });
 
     successMessage.value = 'Carer request submitted successfully!';
+    hasRequestedCarer.value = true; // Mark that the request has been submitted
   } catch (error) {
-    console.error(error);
+    console.error('Error submitting carer request:', error);
     errors.value.carerRequest = 'Failed to submit carer request.';
   }
 };
 
-// On component mounted, check if the user is a carer
+// On component mounted, check if the user is a carer or has already requested carer status
 onMounted(() => {
   if (isAuthenticated.value && role.value === 'carer') {
     fetchCarerData();
+  } else {
+    checkExistingCarerRequest();
   }
 });
-
 </script>
 
 <template>
@@ -226,7 +167,7 @@ onMounted(() => {
           </div>
 
           <div class="mb-3">
-            <label for="rating" class="form-label">Rating (you can make this readonly)</label>
+            <label for="rating" class="form-label">Rating</label>
             <input 
               type="number" 
               class="form-control" 
@@ -244,8 +185,17 @@ onMounted(() => {
       <!-- Request Carer Section for non-carers -->
       <div v-if="!isCarer && role == 'user'">
         <h3>Request to be a Carer</h3>
-        <button @click="requestCarer" class="btn btn-warning">Request Carer Status</button>
+        <button 
+          @click="requestCarer" 
+          class="btn btn-warning"
+          :disabled="hasRequestedCarer"
+        >
+          Request Carer Status
+        </button>
         <div v-if="errors.carerRequest" class="text-danger">{{ errors.carerRequest }}</div>
+        <div v-if="hasRequestedCarer && !errors.carerRequest" class="text-info">
+          You have already submitted a carer request. It is pending approval.
+        </div>
       </div>
 
       <div v-if="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>

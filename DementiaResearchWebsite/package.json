@@ -22,6 +22,7 @@
     "firebase-functions": "^6.0.1",
     "jspdf": "^2.5.2",
     "mapbox-gl": "^3.7.0",
+    "openai": "^4.67.1",
     "primevue": "^4.0.4",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3"

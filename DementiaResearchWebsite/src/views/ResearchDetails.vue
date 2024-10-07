@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import Rating from 'primevue/rating';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -34,12 +34,17 @@ const errors = ref({
   comments: null,
 });
 
-// Function to fetch the research item from Firestore
+// Function to fetch the research item and its reviews from Firestore
 const fetchResearchItem = async () => {
   const docRef = doc(db, 'research', route.params.id); // Use id to get document
   const docSnap = await getDoc(docRef);
+  
   if (docSnap.exists()) {
-    researchItem.value = { id: docSnap.id, ...docSnap.data() };
+    const data = docSnap.data();
+    researchItem.value = { id: docSnap.id, ...data };
+    submittedReviews.value = data.reviews || []; // Fetch the reviews from Firestore
+    
+    calculateAverage(); // Calculate the average rating
   } else {
     console.log("No such document!");
   }
@@ -50,14 +55,23 @@ onMounted(() => {
   fetchResearchItem();
 });
 
-// Function to handle review submission
-const submitReview = () => {
+// Function to handle review submission and store it in Firestore
+const submitReview = async () => {
   validateComments(true);
+  
   if (!errors.value.comments && !errors.value.rating) {
-    visible.value = false;
+    // Update the reviews in Firestore
+    const docRef = doc(db, 'research', route.params.id);
+    
+    await updateDoc(docRef, {
+      reviews: arrayUnion({ rating: review.value.rating, comments: review.value.comments }) // Add new review to Firestore
+    });
+    
+    // Update local state
     submittedReviews.value.push({ ...review.value });
-    calculateAverage(); // recalculate average rating
-    clearReview(); // clear the review form
+    calculateAverage(); // Recalculate average rating
+    clearReview(); // Clear the review form
+    visible.value = false;
   }
 };
 
@@ -88,7 +102,6 @@ const validateComments = (blur) => {
   }
 };
 
-// Function to export research as PDF
 // Function to export research as PDF
 const exportToPDF = () => {
   const doc = new jsPDF();
@@ -196,7 +209,7 @@ const exportToPDF = () => {
     </div>
 
     <!-- Review submission dialog -->
-    <Dialog v-model:visible="visible" modal>
+    <Dialog v-model:visible="visible" modal class="custom-dialog">
       <h4>Submit a Review for {{ researchItem.title }}</h4>
       <div class="spacer">
         <span>Rating</span>
@@ -219,7 +232,7 @@ const exportToPDF = () => {
           <div v-if="errors.comments" class="text-danger">{{ errors.comments }}</div>
         </div>
       </div>
-      <Button @click="submitReview" label="Submit" severity="Primary" outlined />
+      <Button @click="submitReview" label="Submit" severity="Primary" />
     </Dialog>
   </div>
 
@@ -229,6 +242,19 @@ const exportToPDF = () => {
 </template>
 
 <style scoped>
+.custom-dialog .p-dialog-content {
+  background-color: white; /* Set modal background to white */
+  padding: 20px; /* Optional: Add padding for a clean look */
+}
+
+.custom-dialog .p-dialog-header {
+  background-color: white; /* Set header background to white, if needed */
+}
+
+.custom-dialog .p-dialog-footer {
+  background-color: white; /* Set footer background to white, if needed */
+}
+
 .spacer {
   padding-top: 10px;
   padding-bottom: 10px;

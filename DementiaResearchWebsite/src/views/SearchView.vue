@@ -37,17 +37,30 @@
     </div>
 
     <p v-if="filteredResearch.length === 0 && filteredCarers.length === 0">No results found.</p>
+
+    <!-- ChatGPT Section - Visible only to carers or admins -->
+    <div v-if="role === 'carer' || role === 'admin'" class="chat-section">
+      <h3>Ask ChatGPT</h3>
+      <div class="chat-container">
+        <input 
+          v-model="chatQuestion" 
+          placeholder="Ask ChatGPT a question" 
+          class="chat-input"
+        />
+        <button @click="askChatGPT" class="chat-button">Ask</button>
+      </div>
+      <p v-if="chatResponse">Response: {{ chatResponse }}</p>
+    </div>
   </div>
 </template>
 
-
-  
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import CarerCard from '@/components/CarerCard.vue';
 import ResearchCard from '@/components/ResearchCard.vue';
+import { role } from '@/main';  // Import role from main.js
 
 // Router setup 
 const router = useRouter();
@@ -61,6 +74,8 @@ const researchPapers = ref([]);
 const carers = ref([]);
 const filteredResearch = ref([]);
 const filteredCarers = ref([]);
+const chatQuestion = ref('');  // State for ChatGPT question
+const chatResponse = ref('');  // State for ChatGPT response
 
 // Fetch research papers and carers on page load
 const fetchResearchAndCarers = async () => {
@@ -96,13 +111,39 @@ const performSearch = () => {
   );
 };
 
+// Method to ask ChatGPT
+const askChatGPT = async () => {
+  if (!chatQuestion.value) {
+    alert('Please enter a question.');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`  // Use OpenAI API Key
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',  // Replace with the appropriate model
+        messages: [{ role: 'user', content: chatQuestion.value }]
+      })
+    });
+    const data = await response.json();
+    chatResponse.value = data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error querying ChatGPT:', error);
+    chatResponse.value = 'Error fetching response from ChatGPT.';
+  }
+};
+
 // Navigation methods
 const navigateToResearch = (id) => {
   router.push({ name: 'ResearchDetails', params: { id } });
 };
 
 const navigateToCarer = (id) => {
-  // Implement the navigation to carer detail page using the carer id
   router.push({ name: 'CarerDetails', params: { id } });
 };
 
@@ -112,7 +153,6 @@ onMounted(() => {
 });
 </script>
 
-  
 <style scoped>
 .search-page {
   padding: 20px;
@@ -150,5 +190,35 @@ h3 {
 .clickable-card {
   cursor: pointer;
   margin-bottom: 10px;
+}
+
+/* ChatGPT section styles */
+.chat-section {
+  margin-top: 30px;
+}
+
+.chat-container {
+  display: flex;
+  align-items: center;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.chat-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.chat-button:hover {
+  background-color: #45a049;
 }
 </style>

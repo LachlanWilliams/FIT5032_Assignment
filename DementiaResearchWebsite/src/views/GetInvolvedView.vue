@@ -5,6 +5,8 @@
       Dementia Australia is the leading national provider of dementia care services, education, and advocacy for people impacted by dementia.
     </p>
 
+    <p>Use our map to find the fastest route to get to the Dementia Australia center</p>
+
     <!-- Search input for location -->
     <input type="text" v-model="searchQuery" @keydown.enter="searchLocation" placeholder="Search location" />
 

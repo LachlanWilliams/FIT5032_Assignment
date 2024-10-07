@@ -79,36 +79,48 @@ const chatResponse = ref('');  // State for ChatGPT response
 
 // Fetch research papers and carers on page load
 const fetchResearchAndCarers = async () => {
+  // Fetch research papers
   const researchSnapshot = await getDocs(collection(db, 'research'));
   researchPapers.value = researchSnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
 
+  // Filter out only approved research papers
+  filteredResearch.value = researchPapers.value.filter(research => research.status === 'approved');
+
+  // Fetch carers
   const carersSnapshot = await getDocs(collection(db, 'carers'));
   carers.value = carersSnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
 
-  filteredResearch.value = researchPapers.value;
+  // Initialize filtered results for carers
   filteredCarers.value = carers.value;
 };
+
 
 // Perform search when the search query is updated
 const performSearch = () => {
   const query = searchQuery.value.toLowerCase();
-  
-  filteredResearch.value = researchPapers.value.filter(research =>
-    research.title.toLowerCase().includes(query) ||
-    research.publisher.toLowerCase().includes(query)
-  );
-  
-  filteredCarers.value = carers.value.filter(carer =>
-    carer.name.toLowerCase().includes(query) ||
-    carer.roleDesc.toLowerCase().includes(query) ||
-    carer.description.toLowerCase().includes(query)
-  );
+
+  // Filter research papers by search query and status 'approved'
+  filteredResearch.value = researchPapers.value
+    .filter(research =>
+      research.status === 'approved' && (
+        research.title.toLowerCase().includes(query) ||
+        research.publisher.toLowerCase().includes(query)
+      )
+    );
+
+  // Filter carers by search query
+  filteredCarers.value = carers.value
+    .filter(carer =>
+      carer.name.toLowerCase().includes(query) ||
+      carer.roleDesc.toLowerCase().includes(query) ||
+      carer.description.toLowerCase().includes(query)
+    );
 };
 
 // Method to ask ChatGPT

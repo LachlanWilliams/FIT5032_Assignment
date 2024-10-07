@@ -58,15 +58,23 @@
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import OpenAI from 'openai';
 import CarerCard from '@/components/CarerCard.vue';
 import ResearchCard from '@/components/ResearchCard.vue';
 import { role } from '@/main';  // Import role from main.js
+
 
 // Router setup 
 const router = useRouter();
 
 // Firebase setup
 const db = getFirestore();
+
+// OpenAi setup 
+const openai = new OpenAI({
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true
+});
 
 // Data
 const searchQuery = ref('');
@@ -126,29 +134,26 @@ const performSearch = () => {
 // Method to ask ChatGPT
 const askChatGPT = async () => {
   if (!chatQuestion.value) {
-    alert('Please enter a question.');
+    chatResponse.value = "Please enter a question.";
     return;
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`  // Use OpenAI API Key
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',  // Replace with the appropriate model
-        messages: [{ role: 'user', content: chatQuestion.value }]
-      })
+    const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+            {"role": "user", "content": chatQuestion.value}
+        ]
     });
-    const data = await response.json();
-    chatResponse.value = data.choices[0].message.content;
+    console.log(completion.choices[0].message);
+    chatResponse.value = completion.choices[0].message.content
+
   } catch (error) {
-    console.error('Error querying ChatGPT:', error);
-    chatResponse.value = 'Error fetching response from ChatGPT.';
+    chatResponse.value = "Error occurred while communicating with ChatGPT.";
+    console.error(error);
   }
 };
+
 
 // Navigation methods
 const navigateToResearch = (id) => {

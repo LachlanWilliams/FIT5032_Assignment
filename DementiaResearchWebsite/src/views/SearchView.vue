@@ -10,6 +10,7 @@
       <button @click="performSearch" class="search-button">Search</button>
     </div>
 
+    <!-- Only display if searchQuery is not empty -->
     <div v-if="filteredResearch.length > 0">
       <h3>Research Papers</h3>
       <ResearchCard
@@ -23,6 +24,7 @@
       />
     </div>
     
+    <!-- Only display if searchQuery is not empty -->
     <div v-if="filteredCarers.length > 0">
       <h3>Carers</h3>
       <CarerCard
@@ -36,7 +38,10 @@
       />
     </div>
 
-    <p v-if="filteredResearch.length === 0 && filteredCarers.length === 0">No results found.</p>
+    <!-- Show no results found if there is a search query but no results -->
+    <p v-if="hasPerformedSearch && filteredResearch.length === 0 && filteredCarers.length === 0">
+      No results found.
+    </p>
 
     <!-- ChatGPT Section - Visible only to carers or admins -->
     <div v-if="role === 'carer' || role === 'admin'" class="chat-section">
@@ -63,7 +68,6 @@ import CarerCard from '@/components/CarerCard.vue';
 import ResearchCard from '@/components/ResearchCard.vue';
 import { role } from '@/main';  // Import role from main.js
 
-
 // Router setup 
 const router = useRouter();
 
@@ -84,6 +88,7 @@ const filteredResearch = ref([]);
 const filteredCarers = ref([]);
 const chatQuestion = ref('');  // State for ChatGPT question
 const chatResponse = ref('');  // State for ChatGPT response
+const hasPerformedSearch = ref(false);
 
 // Fetch research papers and carers on page load
 const fetchResearchAndCarers = async () => {
@@ -94,23 +99,17 @@ const fetchResearchAndCarers = async () => {
     ...doc.data()
   }));
 
-  // Filter out only approved research papers
-  filteredResearch.value = researchPapers.value.filter(research => research.status === 'approved');
-
   // Fetch carers
   const carersSnapshot = await getDocs(collection(db, 'carers'));
   carers.value = carersSnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
-
-  // Initialize filtered results for carers
-  filteredCarers.value = carers.value;
 };
-
 
 // Perform search when the search query is updated
 const performSearch = () => {
+  hasPerformedSearch.value = true;
   const query = searchQuery.value.toLowerCase();
 
   // Filter research papers by search query and status 'approved'
@@ -146,7 +145,6 @@ const askChatGPT = async () => {
             {"role": "user", "content": chatQuestion.value}
         ]
     });
-    console.log(completion.choices[0].message);
     chatResponse.value = completion.choices[0].message.content
 
   } catch (error) {
@@ -154,7 +152,6 @@ const askChatGPT = async () => {
     console.error(error);
   }
 };
-
 
 // Navigation methods
 const navigateToResearch = (id) => {

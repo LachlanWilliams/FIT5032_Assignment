@@ -20,9 +20,9 @@
   </section>
 
   <section class="featured-section">
-    <h2>Research Highlights</h2>
-    <p>Read about the latest discoveries and advancements in dementia research.</p>
-    <router-link to="/Research" class="btn btn-primary">Read More</router-link>
+    <h2>Carer Highlights</h2>
+    <p>Check out our carers! Read about who might be a good fit to help you out.</p>
+    <router-link to="/Carers" class="btn btn-primary">Read More</router-link>
   </section>
 </template>
 

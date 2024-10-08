@@ -20,8 +20,6 @@ if (!apiKey || !apiKey.startsWith('SG.')) {
     throw new Error('API key does not start with "SG." or is not set.');
 }
 
-console.log("API KEY")
-console.log(apiKey);
 sgMail.setApiKey(apiKey);
 
 // Endpoint to send email when carer is accepted

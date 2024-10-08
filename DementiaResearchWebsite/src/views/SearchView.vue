@@ -118,7 +118,8 @@ const performSearch = () => {
     .filter(research =>
       research.status === 'approved' && (
         research.title.toLowerCase().includes(query) ||
-        research.publisher.toLowerCase().includes(query)
+        research.publisher.toLowerCase().includes(query) || 
+        research.precontent.toLowerCase().includes(query)
       )
     );
 

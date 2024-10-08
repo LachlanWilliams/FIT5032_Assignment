@@ -34,9 +34,6 @@ npm run build
 
 As per my interview with Gonazlo, I have come up with a list of necessary changes that need to be made by the next implementation of the website.
 
-- Email carer once approved
 - Admin bulk email all users
 - interactive table
 - Deployment to the cloud
-- genAI in search ?
-- Carer, once approved has to complete their profile

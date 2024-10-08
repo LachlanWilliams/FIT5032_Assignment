@@ -49,7 +49,7 @@ const submitResearch = async () => {
       await addDoc(collection(db, 'research'), researchData);
 
       alert('Research submitted for review.');
-      router.push({ name: 'ResearchView' }); // Redirect back to research view page
+      router.push({ name: 'Research' }); // Redirect back to research view page
     } catch (error) {
       console.error('Error submitting research:', error);
       alert('There was an error submitting your research.');

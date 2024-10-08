@@ -86,26 +86,33 @@
 
         <h4>Pending Research</h4>
         <table v-if="pendingResearch.length > 0" class="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Publisher</th>
-              <th>Submission Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="research in pendingResearch" :key="research.id">
-              <td>{{ research.title }}</td>
-              <td>{{ research.publisher }}</td>
-              <td>{{ research.submittedAt.toDate().toLocaleString() }}</td>
-              <td>
-                <button @click="updateResearchStatus(research, 'approved')" class="btn btn-success">Approve</button>
-                <button @click="updateResearchStatus(research, 'rejected')" class="btn btn-danger">Reject</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Publisher</th>
+          <th>Submission Date</th>
+          <th>Actions</th>
+          <th>View</th> <!-- New column for View button -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="research in pendingResearch" :key="research.id">
+          <td>{{ research.title }}</td>
+          <td>{{ research.publisher }}</td>
+          <td>{{ research.submittedAt.toDate().toLocaleString() }}</td>
+          <td>
+            <button @click="updateResearchStatus(research, 'approved')" class="btn btn-success">Approve</button>
+            <button @click="updateResearchStatus(research, 'rejected')" class="btn btn-danger">Reject</button>
+          </td>
+          <td>
+            <!-- Router-link to the researchDetails page with the research ID -->
+            <router-link :to="{ name: 'ResearchDetails', params: { id: research.id } }">
+              <button class="btn btn-info">View</button>
+            </router-link>
+          </td>
+        </tr>
+      </tbody>
+    </table>
         <p v-else>No pending research papers at the moment.</p>
 
         <h4>Approved Research</h4>

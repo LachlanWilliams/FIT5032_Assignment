@@ -1,9 +1,10 @@
 <script setup>
-import ResearchCard from "@/components/ResearchCard.vue";
-import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { getFirestore, collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import  DataTable from 'primevue/datatable';
+import  Column from 'primevue/column';
 
 // Firebase setup
 const db = getFirestore();
@@ -15,6 +16,17 @@ const isCarer = ref(false);
 
 // Reactive variable to store research papers
 const researchPapers = ref([]);
+
+// Reactive variable for search filters
+const filters = ref({
+  title: '',
+  publisher: '',
+  date: ''
+});
+
+// Reactive variable for pagination
+const first = ref(0); // starting point of data
+const rows = ref(10); // number of rows per page
 
 // Function to navigate to the research details page
 const navigateToResearch = (id) => {
@@ -62,24 +74,58 @@ onMounted(() => {
     Submit Research
   </button>
 
-  <div>
-    <ResearchCard
-      v-for="researchItem in researchPapers"
-      :key="researchItem.id"
-      :title="researchItem.title"
-      :publisher="researchItem.publisher"
-      :date="researchItem.date"
-      @click="navigateToResearch(researchItem.id)"
-      class="clickable-card"
+  <!-- PrimeVue DataTable with sorting, searching, and pagination -->
+  <DataTable
+    :value="researchPapers"
+    paginator
+    :rows="rows"
+    :first="first"
+    :totalRecords="researchPapers.length"
+    :filters="filters"
+    @page="first = $event.first"
+    class="research-table"
+    responsiveLayout="scroll"
+  >
+    <!-- Searchable column for title -->
+    <Column 
+      field="title" 
+      header="Title" 
+      :filter="true" 
+      filterPlaceholder="Search by title" 
+      :filterValue="filters.title" 
+      @filter="filters.title = $event.value"
+      sortable 
     />
-  </div>
+
+    <!-- Searchable column for publisher -->
+    <Column 
+      field="publisher" 
+      header="Publisher" 
+      :filter="true" 
+      filterPlaceholder="Search by publisher" 
+      :filterValue="filters.publisher" 
+      @filter="filters.publisher = $event.value"
+      sortable 
+    />
+
+    <!-- Sortable column for date -->
+    <Column 
+      field="date" 
+      header="Date" 
+      sortable
+    />
+
+    <!-- Action column to navigate to research details -->
+    <!-- <Column 
+      header="Actions" 
+      :body="(_, options) => (
+        <button @click='navigateToResearch(options.data.id)'>View</button>
+      )" 
+    /> -->
+  </DataTable>
 </template>
 
 <style scoped>
-.clickable-card {
-  cursor: pointer;
-}
-
 .submit-research-btn {
   margin: 10px 0;
   padding: 10px 15px;
@@ -92,5 +138,12 @@ onMounted(() => {
 
 .submit-research-btn:hover {
   background-color: #45a049;
+}
+
+.research-table {
+  color: white;
+  background-color: white;
+  margin-top: 20px;
+  width: 100%;
 }
 </style>

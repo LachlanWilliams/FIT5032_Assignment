@@ -8,6 +8,9 @@ import { ref } from 'vue'
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
+import lara from '@primevue/themes/lara'
+import nora from '@primevue/themes/nora'
+
 
 // Firebase imports
 import { initializeApp } from "firebase/app";
@@ -33,7 +36,7 @@ const app = createApp(App)
 app.use(PrimeVue, {
     // Default theme configuration
     theme: {
-        preset: Aura,
+        preset: nora,
         options: {
             prefix: 'p',
             darkModeSelector: 'system',

@@ -32,14 +32,14 @@ import { RouterLink } from 'vue-router';
   left: 0;
   width: 60px; /* Adjust the width as needed */
   height: 50px; /* Adjust the height as needed */
-  background-image: url('@/assets/logo.png'); /* Replace with your image path */
+  /*background-image: url('@/assets/logo.png'); /* Replace with your image path */
   background-size: cover; /* Ensure the image covers the area */
   background-repeat: no-repeat; /* Prevent repeating the image */
 }
 
 .app-container {
   /* Set the background image */
-  background-image: url('@/assets/Clouds.png');
+  /*background-image: url('@/assets/Clouds.png');
   background-size: 300px; /* Ensure the image covers the entire container */
   /* background-position: center; Center the background image */
   background-repeat: no-repeat; /* Avoid repeating the image */

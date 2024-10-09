@@ -28,7 +28,6 @@
 
 <style scoped>
 .hero-section {
-  background-image: url('/hero-background.jpg');
   background-size: cover;
   background-position: center;
   padding: 6rem 0;

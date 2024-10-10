@@ -18,8 +18,6 @@ const cors = require("cors")({origin: true});
 
 admin.initializeApp();
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 exports.countCarers = onRequest((req, res) => {
   cors(req, res, async () => {
     try {
@@ -49,44 +47,3 @@ exports.countUsers = onRequest((req, res) => {
     }
   });
 });
-
-// eslint-disable-next-line max-len
-// exports.sendAcceptanceEmail = onDocumentCreated("/carer/{documentId}", async (event) => {
-//   const carerData = event.data.data();
-//   const userID = carerData.userID;
-
-//   try {
-//     // Get the user document from the users collection using the userID
-//     // eslint-disable-next-line max-len
-//     const userDoc = await admin.firestore().collection("users").doc(userID).get();
-
-//     if (!userDoc.exists) {
-//       console.error(`User with ID ${userID} not found`);
-//       return;
-//     }
-
-//     // Get the user's email from the user document
-//     const userEmail = userDoc.data().email;
-
-//     if (!userEmail) {
-//       console.error(`Email not found for user with ID ${userID}`);
-//       return;
-//     }
-
-//     // Prepare the email message
-//     const msg = {
-//       to: userEmail, // Send the email to the user's email
-//       from: "test@example.com", // Change to your verified sender email
-//       subject: "Carer Application Accepted",
-//       text: "Congratulations, your carer application has been accepted!",
-//       // eslint-disable-next-line max-len, max-len
-//       html: "<strong>Congratulations, your carer application has been accepted!</strong>",
-//     };
-
-//     // Send the email
-//     await sgMail.send(msg);
-//     console.log(`Email sent to ${userEmail}`);
-//   } catch (error) {
-//     console.error("Error sending email:", error);
-//   }
-// });

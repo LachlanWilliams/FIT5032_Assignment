@@ -173,7 +173,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
 import PieChart from '@/components/PieChart.vue';
 import axios from 'axios';
 
@@ -228,11 +228,26 @@ const updateRequestStatus = async (request, status) => {
     const requestRef = doc(db, 'carerRequests', request.id);
     await updateDoc(requestRef, { status });
 
-    if (status === 'accepted') {
+    if (status === 'accepted' || status === 'approved') {
+      // Update user's role to 'carer' in the 'users' collection
+      const userRef = doc(db, 'users', request.userId);
+      await updateDoc(userRef, { role: 'carer' });
+
+      const carerData = {
+        userId: request.userId,        // The user's ID
+        name: request.name,        
+        email: request.email,   
+        roleDesc: 'Carer',             // Default role description
+        rating: 0,                     // Initial rating
+        description: "I'm new here!!", // Default description
+      };
+    
+      await setDoc(doc(db, 'carers', request.userId), carerData);
+
       // Send email to the accepted carer
       await axios.post('http://localhost:3000/send-acceptance-email', {
         email: request.email,
-        name: request.name,  // Assuming request contains the carer's name
+        name: request.name,  
       });
     }
 

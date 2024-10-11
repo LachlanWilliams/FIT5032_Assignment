@@ -1,6 +1,11 @@
 <script setup>
-import Header from './components/Header.vue'
+import Header from './components/Header.vue';
 import { RouterLink } from 'vue-router';
+import { isOnline } from '@/main'; // Adjust the path as necessary
+import { computed } from 'vue';
+
+// Computed property to display online/offline status
+const onlineStatus = computed(() => (isOnline.value ? 'Online' : 'Offline'));
 </script>
 
 <template>
@@ -11,6 +16,9 @@ import { RouterLink } from 'vue-router';
       </div>
     </router-link>
 
+    <div v-if="!isOnline" class="status-banner">
+      You are currently offline. Some features may be unavailable.
+    </div>
     <header>
       <Header />
     </header>
@@ -27,7 +35,6 @@ import { RouterLink } from 'vue-router';
   padding-top: 10px;
 }
 .background-image {
-  /* position: absolute; Position relative to the nearest positioned ancestor */
   top: 0;
   left: 0;
   width: 60px; /* Adjust the width as needed */
@@ -38,14 +45,17 @@ import { RouterLink } from 'vue-router';
 }
 
 .app-container {
-  /* Set the background image */
-  /*background-image: url('@/assets/Clouds.png');
-  background-size: 300px; /* Ensure the image covers the entire container */
-  /* background-position: center; Center the background image */
   background-repeat: no-repeat; /* Avoid repeating the image */
   background-attachment: fixed; /* Keeps the background fixed while scrolling */
-  
-  /* Take the full height of the viewport */
   min-height: 100vh;
+}
+
+/* Styles for the status banner */
+.status-banner {
+  background-color: #ffcccb; /* Light red background */
+  color: #d8000c; /* Dark red text */
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
 }
 </style>

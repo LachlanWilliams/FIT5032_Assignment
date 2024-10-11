@@ -1,14 +1,12 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './assets/main.css' // Import your custom stylesheet
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/main.css'; // Import your custom stylesheet
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import { ref } from 'vue'
+import { createApp, ref } from 'vue';
+import App from './App.vue';
+import router from './router';
 
-import PrimeVue from 'primevue/config'
-import Aura from '@primevue/themes/aura'
-
+import PrimeVue from 'primevue/config';
+import Aura from '@primevue/themes/aura';
 
 // Firebase imports
 import { initializeApp } from "firebase/app";
@@ -21,16 +19,30 @@ const firebaseConfig = {
     storageBucket: "dementiaresearchwebsite.appspot.com",
     messagingSenderId: "317100823817",
     appId: "1:317100823817:web:6890326690760ca301efd8"
-  };
+};
 
 // Initialize Firebase app (this must happen before using Firebase services)
 initializeApp(firebaseConfig);
 
-export const isAuthenticated = ref(false); 
+// Global refs
+export const isAuthenticated = ref(false);
 export const name = ref('');
 export const role = ref('user');
 
-const app = createApp(App)
+// Ref to track online/offline status
+export const isOnline = ref(navigator.onLine);
+
+// Function to update online status
+const updateOnlineStatus = () => {
+    isOnline.value = navigator.onLine;
+};
+
+// Add event listeners for online/offline events
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Create the Vue app
+const app = createApp(App);
 app.use(PrimeVue, {
     // Default theme configuration
     theme: {
@@ -42,6 +54,12 @@ app.use(PrimeVue, {
         }
     }
 });
-app.use(router)
+app.use(router);
 
-app.mount('#app')
+app.mount('#app');
+
+// Cleanup event listeners on app unmount
+app.unmount = () => {
+    window.removeEventListener('online', updateOnlineStatus);
+    window.removeEventListener('offline', updateOnlineStatus);
+};

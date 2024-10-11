@@ -163,6 +163,9 @@
         <p v-if="carerCount != 0">{{ carerCountError }}</p>
         <p v-if="userCount != 0">Total number of User: {{ userCount }}</p>
         <p v-if="userCount != 0">{{ userCountError }}</p>
+        <div class="chart-container">
+          <PieChart />
+        </div>
       </div>
     </div>
   </div>
@@ -171,6 +174,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import PieChart from '@/components/PieChart.vue';
 import axios from 'axios';
 
 const db = getFirestore();
@@ -374,5 +378,16 @@ const setActive = (tab) => {
 .btn-danger {
   background-color: #e74c3c;
   color: white;
+}
+
+.chart-container {
+  max-width: 500px; /* Limit the width of the pie chart */
+  width: 100%; /* Make it responsive */
+  margin: 0 auto; /* Center the chart horizontally */
+}
+
+.chart-container canvas {
+  width: 100% !important; /* Ensure the chart respects container width */
+  height: auto !important; /* Maintain aspect ratio */
 }
 </style>
